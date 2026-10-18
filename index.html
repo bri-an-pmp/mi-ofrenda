@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120a10">
+<meta name="description" content="Build a Day of the Dead altar for someone you love and learn the Spanish word for every offering.">
+<title>Mi Ofrenda</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<!-- Gradients shared by every candle drawing -->
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="fl" cx=".5" cy=".7" r=".6"><stop offset="0" stop-color="#fff6c8"/><stop offset=".5" stop-color="#ffc24a"/><stop offset="1" stop-color="#ff7a1a"/></radialGradient>
+    <linearGradient id="glassShade" x1="0" x2="1"><stop offset="0" stop-color="#000"/><stop offset=".3" stop-color="#000" stop-opacity="0"/><stop offset=".8" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000"/></linearGradient>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <button id="homeBtn" class="brand" type="button" aria-label="Mi Ofrenda, go to the start">
+    <span aria-hidden="true">🌼</span> <span lang="es">Mi Ofrenda</span>
+  </button>
+</header>
+
+<main>
+  <!-- 1. Welcome -->
+  <section id="screenHome" class="screen page">
+    <div class="intro">
+      <p class="eyebrow" lang="es">Día de los Muertos · 1 y 2 de noviembre</p>
+      <h1>Build an altar. <span class="es" lang="es">Aprende español.</span></h1>
+      <p>On the Day of the Dead, families in Mexico build an <b lang="es">ofrenda</b> (altar) to welcome the spirits of the people they love back home for one night.</p>
+      <p>A traditional altar has three steps: heaven at the top, earth in the middle, and the underworld at the bottom. A marigold arch marks the doorway between the living and the dead.</p>
+      <p>Choose someone to remember, then place offerings on their altar. Each one teaches you its Spanish word, how to say it, and how to use it in a sentence.</p>
+      <button id="startBtn" class="btn primary" type="button">Build an altar <span lang="es">· Crear una ofrenda</span></button>
+    </div>
+    <div id="savedWrap" class="saved" hidden>
+      <h2>Your altars <span class="es" lang="es">· Tus ofrendas</span></h2>
+      <ul id="savedList" class="saved-list"></ul>
+    </div>
+  </section>
+
+  <!-- 2. Who to remember -->
+  <section id="screenChoose" class="screen page" hidden>
+    <h1>Who would you like to remember? <span class="es" lang="es">¿A quién recuerdas?</span></h1>
+
+    <h2 class="step">Someone in your life</h2>
+    <div id="relationGrid" class="pick-grid" role="group" aria-label="Choose a family member, friend or pet"></div>
+
+    <form id="personForm" class="person-form" hidden>
+      <p id="pickedLabel" class="picked"></p>
+      <label for="nameInput">Their name <span class="es" lang="es">· Su nombre</span></label>
+      <input id="nameInput" type="text" maxlength="40" autocomplete="off" placeholder="For example: Rosa">
+      <label for="memoryInput">A memory of them (optional) <span class="es" lang="es">· Un recuerdo</span></label>
+      <textarea id="memoryInput" rows="2" maxlength="200" placeholder="For example: She sang while she cooked."></textarea>
+      <button class="btn primary" type="submit">Go to the altar <span lang="es">· Ir a la ofrenda</span></button>
+    </form>
+
+    <h2 class="step">Or someone many people remember</h2>
+    <div id="famousGrid" class="pick-grid" role="group" aria-label="Choose a well-known person"></div>
+  </section>
+
+  <!-- 3. The altar, in a dark living room -->
+  <section id="screenAltar" class="screen altar-screen" hidden>
+    <div id="stage" class="stage">
+      <!-- the room: wall, window, curtains, family photos, wainscot -->
+      <svg class="room" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="wall" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2b1a22"/><stop offset="1" stop-color="#3a2129"/></linearGradient>
+          <pattern id="damask" width="44" height="64" patternUnits="userSpaceOnUse">
+            <path d="M22 6c6 8 6 14 0 22-6-8-6-14 0-22zM22 36c6 8 6 14 0 22-6-8-6-14 0-22z" fill="#4a2a33" opacity=".55"/>
+            <circle cx="0" cy="32" r="3" fill="#4a2a33" opacity=".5"/><circle cx="44" cy="32" r="3" fill="#4a2a33" opacity=".5"/>
+          </pattern>
+          <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0b1430"/><stop offset="1" stop-color="#23305a"/></linearGradient>
+          <radialGradient id="moonGlow"><stop offset="0" stop-color="#dfe8ff" stop-opacity=".55"/><stop offset="1" stop-color="#dfe8ff" stop-opacity="0"/></radialGradient>
+          <linearGradient id="drape" x1="0" x2="1"><stop offset="0" stop-color="#4a0f1f"/><stop offset=".25" stop-color="#7a1c33"/><stop offset=".5" stop-color="#4a0f1f"/><stop offset=".75" stop-color="#6e1830"/><stop offset="1" stop-color="#3d0c19"/></linearGradient>
+          <linearGradient id="wood" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4a2c1b"/><stop offset="1" stop-color="#2c180e"/></linearGradient>
+          <linearGradient id="sepia" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#b89a74"/><stop offset="1" stop-color="#6e5539"/></linearGradient>
+        </defs>
+        <rect width="1000" height="700" fill="url(#wall)"/>
+        <rect width="1000" height="560" fill="url(#damask)"/>
+        <!-- window with the night sky -->
+        <rect x="70" y="110" width="190" height="270" fill="#1d120c"/>
+        <rect x="82" y="122" width="166" height="246" fill="url(#sky)"/>
+        <circle cx="200" cy="180" r="70" fill="url(#moonGlow)"/>
+        <circle cx="200" cy="180" r="20" fill="#eef2ff"/>
+        <g fill="#e8eeff"><circle cx="110" cy="150" r="1.4"/><circle cx="140" cy="230" r="1"/><circle cx="230" cy="290" r="1.2"/><circle cx="120" cy="320" r="1"/><circle cx="170" cy="140" r="1"/></g>
+        <path d="M82 300 q40-30 80-10 q40 20 86 -6 V368 H82z" fill="#0a0f1f"/>
+        <path d="M165 122v246M82 245h166" stroke="#1d120c" stroke-width="8"/>
+        <rect x="60" y="380" width="210" height="12" fill="#2a170d"/>
+        <!-- curtains -->
+        <path d="M40 90 h70 c-6 90 6 200 -10 330 c-20 4 -44 4 -60 0z" fill="url(#drape)"/>
+        <path d="M290 90 h-70 c6 90 -6 200 10 330 c20 4 44 4 60 0z" fill="url(#drape)"/>
+        <rect x="30" y="82" width="270" height="10" rx="5" fill="#2a170d"/>
+        <!-- family photos on the wall -->
+        <rect x="740" y="150" width="96" height="120" fill="#5a3a1f"/><rect x="750" y="160" width="76" height="100" fill="url(#sepia)"/>
+        <circle cx="788" cy="198" r="16" fill="#4a3826" opacity=".7"/><path d="M762 260c4-26 48-26 52 0z" fill="#4a3826" opacity=".7"/>
+        <rect x="860" y="200" width="80" height="96" fill="#6b4a25"/><rect x="868" y="208" width="64" height="80" fill="url(#sepia)"/>
+        <circle cx="900" cy="240" r="13" fill="#4a3826" opacity=".7"/><path d="M878 288c3-22 41-22 44 0z" fill="#4a3826" opacity=".7"/>
+        <!-- wainscot -->
+        <rect y="560" width="1000" height="140" fill="url(#wood)"/>
+        <rect y="552" width="1000" height="12" fill="#5a3622"/>
+        <g fill="none" stroke="#24130a" stroke-width="3"><rect x="20" y="585" width="200" height="95"/><rect x="250" y="585" width="200" height="95"/><rect x="550" y="585" width="200" height="95"/><rect x="780" y="585" width="200" height="95"/></g>
+      </svg>
+      <div class="floor" aria-hidden="true"></div>
+
+      <div id="altar" class="altar">
+        <svg id="altarArt" class="altar-art" viewBox="0 0 400 520" aria-hidden="true">
+          <defs>
+            <linearGradient id="folds" x1="0" x2="26" gradientUnits="userSpaceOnUse" spreadMethod="repeat">
+              <stop offset="0" stop-color="#e6dccd"/><stop offset=".35" stop-color="#f6efe4"/><stop offset=".7" stop-color="#d4c6b3"/><stop offset="1" stop-color="#e6dccd"/>
+            </linearGradient>
+            <linearGradient id="faceShade" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3a1a10" stop-opacity="0"/><stop offset="1" stop-color="#3a1a10" stop-opacity=".35"/></linearGradient>
+            <linearGradient id="topCloth" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#cfc1ad"/><stop offset="1" stop-color="#f3ebdf"/></linearGradient>
+            <pattern id="embroidery" width="20" height="12" patternUnits="userSpaceOnUse">
+              <rect width="20" height="12" fill="#f3ebdf"/>
+              <circle cx="5" cy="6" r="3" fill="#d6336c"/><circle cx="5" cy="6" r="1.1" fill="#f59b23"/>
+              <circle cx="15" cy="6" r="3" fill="#e8892a"/><circle cx="15" cy="6" r="1.1" fill="#7b2d8e"/>
+              <ellipse cx="10" cy="3" rx="2" ry="1" fill="#2f8f5b"/><ellipse cx="10" cy="9" rx="2" ry="1" fill="#2f8f5b"/>
+            </pattern>
+          </defs>
+          <g id="arco" class="arco" opacity="0"></g>
+          <g id="steps"></g>
+          <g id="papelPicado" class="papel" opacity="0"><path d="M0 18 Q200 46 400 18" fill="none" stroke="#c9b8a6" stroke-width="1.5"/></g>
+          <g id="petals" opacity="0"></g>
+        </svg>
+        <button id="photoBtn" class="photo" type="button">
+          <span class="photo-inner"><span id="photoIcon" class="photo-icon" aria-hidden="true"></span></span>
+          <span id="photoName" class="photo-name"></span>
+        </button>
+        <div id="placed" class="placed"></div>
+      </div>
+
+      <div id="dark" class="dark" aria-hidden="true"></div>
+      <div id="glow" class="glow" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <div class="stage-title">
+        <h1><span lang="es">La ofrenda para</span> <span id="altarName"></span></h1>
+        <p id="altarMemory" class="memory" hidden></p>
+      </div>
+      <p id="darkHint" class="dark-hint">It's dark in here. Light a candle, <b lang="es">la vela</b>, to see the altar.</p>
+
+      <div id="caption" class="caption" aria-live="polite" hidden>
+        <span id="captionIcon" class="caption-icon" aria-hidden="true"></span>
+        <span class="caption-text">
+          <span id="captionWord" class="caption-word" lang="es"></span>
+          <span id="captionSub" class="caption-sub"></span>
+        </span>
+        <button id="captionSpeak" class="icon-btn" type="button" aria-label="Listen">🔊</button>
+        <button id="captionMore" class="btn small primary" type="button">Learn more</button>
+      </div>
+    </div>
+
+    <div class="dock">
+      <p class="hint"><b>Drag</b> an offering onto the altar, or <b>tap</b> it. Tap anything on the altar to learn more.</p>
+      <div id="tabs" class="tabs" role="tablist" aria-label="Kinds of offerings"></div>
+      <div id="tray" class="tray" role="tabpanel"></div>
+      <div class="dock-foot">
+        <p id="count" class="count"></p>
+        <button id="practiceBtn" class="btn small" type="button">Practice my words <span lang="es">· Practicar</span></button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Word card: the word, how to say it, and a sentence using it -->
+<dialog id="card" class="card" aria-labelledby="cardWord">
+  <div class="card-icon" id="cardIcon" aria-hidden="true"></div>
+  <h2 id="cardWord" lang="es"></h2>
+  <p class="say"><span id="cardSay"></span> · <span id="cardEn"></span></p>
+  <button id="speakBtn" class="btn" type="button">🔊 Listen <span lang="es">· Escuchar</span></button>
+  <div class="sentence">
+    <p class="sentence-label">Use it in a sentence <span lang="es">· En una frase</span></p>
+    <p id="cardSentence" lang="es"></p>
+    <p id="cardSentenceEn" class="muted"></p>
+    <button id="speakSentenceBtn" class="btn small" type="button">🔊 Hear the sentence</button>
+  </div>
+  <p id="cardWhy" class="why"></p>
+  <div class="card-actions">
+    <button id="removeBtn" class="btn" type="button">Remove from altar</button>
+    <button id="closeCard" class="btn primary" type="button">Done <span lang="es">· Listo</span></button>
+  </div>
+</dialog>
+
+<!-- Practice quiz -->
+<dialog id="quiz" class="card" aria-labelledby="quizTitle">
+  <h2 id="quizTitle">How do you say it? <span class="es" lang="es">¿Cómo se dice?</span></h2>
+  <div id="quizIcon" class="card-icon" aria-hidden="true"></div>
+  <p id="quizEn" class="quiz-en"></p>
+  <div id="quizChoices" class="quiz-choices"></div>
+  <p id="quizFeedback" class="feedback" aria-live="assertive"></p>
+  <div class="card-actions">
+    <button id="quizNext" class="btn" type="button" hidden>Next <span lang="es">· Siguiente</span></button>
+    <button id="quizClose" class="btn primary" type="button">Finish <span lang="es">· Terminar</span></button>
+  </div>
+</dialog>
+
+<p id="status" class="status" role="status" aria-live="polite"></p>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
