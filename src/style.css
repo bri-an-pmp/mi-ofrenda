@@ -594,6 +594,31 @@ p .en { margin-top: 4px; }
 body.no-en .en { display: none !important; }
 
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.back-btn {
+  margin-right: auto; /* sits right after the logo */
+  min-height: 44px;
+  padding: 4px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: transparent;
+  color: inherit;
+  line-height: 1.15;
+  cursor: pointer;
+}
+.back-btn[hidden] { display: none; }
+.back-es { font-weight: 700; font-size: 15px; }
+.back-btn .en { font-size: 13px; }
+.back-btn:hover, .back-btn:focus-visible { border-color: var(--gold, #f2b544); }
+/* famous people: two even rows of five on wide screens */
+@media (min-width: 900px) { #famousGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.pick-photo {
+  width: 84px; height: 84px; border-radius: 50%; object-fit: cover; object-position: center 22%;
+  border: 2px solid var(--line); background: #1a0f16; margin-bottom: 4px;
+}
 .en-toggle {
   min-height: 44px;
   padding: 4px 14px;

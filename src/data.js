@@ -279,11 +279,16 @@ export const RELATIONS = [
 
 // Well-known people often honored on public altars in Mexico
 export const FAMOUS = [
-  { id: 'frida', name: 'Frida Kahlo', es: 'la pintora', en: 'the painter', icon: '🎨' },
-  { id: 'pedro', name: 'Pedro Infante', es: 'el cantante y actor', en: 'the singer and actor', icon: '🎤' },
-  { id: 'cantinflas', name: 'Cantinflas', es: 'el comediante', en: 'the comedian', icon: '🎩' },
-  { id: 'juanga', name: 'Juan Gabriel', es: 'el cantautor', en: 'the singer-songwriter', icon: '🎶' },
-  { id: 'selena', name: 'Selena', es: 'la reina de la música tejana', en: 'the queen of Tejano music', icon: '🌹' },
+  { id: 'frida', name: 'Frida Kahlo', es: 'la pintora', en: 'the painter', icon: '🎨', photo: 'people/frida.jpg' },
+  { id: 'diego', name: 'Diego Rivera', es: 'el muralista', en: 'the muralist', icon: '🖌️', photo: 'people/diego.jpg' },
+  { id: 'sorjuana', name: 'Sor Juana Inés de la Cruz', es: 'la poeta', en: 'the poet', icon: '🪶', photo: 'people/sorjuana.jpg' },
+  { id: 'rulfo', name: 'Juan Rulfo', es: 'el escritor', en: 'the writer', icon: '📖', photo: 'people/rulfo.jpg' },
+  { id: 'fuentes', name: 'Carlos Fuentes', es: 'el novelista', en: 'the novelist', icon: '✒️', photo: 'people/fuentes.jpg' },
+  { id: 'pedro', name: 'Pedro Infante', es: 'el cantante y actor', en: 'the singer and actor', icon: '🎤', photo: 'people/pedro.jpg' },
+  { id: 'cantinflas', name: 'Cantinflas', es: 'el comediante', en: 'the comedian', icon: '🎩', photo: 'people/cantinflas.jpg' },
+  { id: 'maria', name: 'María Félix', es: 'la actriz', en: 'the actress', icon: '🎬', photo: 'people/maria.jpg' },
+  { id: 'juanga', name: 'Juan Gabriel', es: 'el cantautor', en: 'the singer-songwriter', icon: '🎶', photo: 'people/juanga.jpg' },
+  { id: 'selena', name: 'Selena', es: 'la reina de la música tejana', en: 'the queen of Tejano music', icon: '🌹', photo: 'people/selena.jpg' },
 ];
 
 export const RELATION_BY_ID = Object.fromEntries(RELATIONS.map((r) => [r.id, r]));

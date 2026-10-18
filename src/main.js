@@ -115,8 +115,11 @@ function saveCurrent() {
 
 // ---------- screens ----------
 
-function show(screen) {
+function show(screen, fromHistory = false) {
   for (const id of ['screenHome', 'screenChoose', 'screenAltar']) $(id).hidden = id !== screen;
+  $('backBtn').hidden = screen === 'screenHome';
+  // Let the browser's own back button move between screens too.
+  if (!fromHistory && history.state?.screen !== screen) history.pushState({ screen }, '');
   document.body.classList.toggle('immersive', screen === 'screenAltar');
   window.scrollTo(0, 0);
   const heading = $(screen).querySelector('h1');
@@ -167,14 +170,24 @@ function renderSaved() {
 
 let pickedRelation = null;
 
-function pickButton(icon, es, enText, onClick, detail = '') {
+function pickButton(icon, es, enText, onClick, detail = '', photo = '') {
   const b = document.createElement('button');
   b.type = 'button';
   b.className = 'pick';
-  const i = document.createElement('span');
-  i.className = 'pick-icon';
-  i.setAttribute('aria-hidden', 'true');
-  i.textContent = icon;
+  let i;
+  if (photo) {
+    i = document.createElement('img');
+    i.className = 'pick-photo';
+    i.src = photo;
+    i.alt = '';
+    i.loading = 'lazy';
+    i.decoding = 'async';
+  } else {
+    i = document.createElement('span');
+    i.className = 'pick-icon';
+    i.setAttribute('aria-hidden', 'true');
+    i.textContent = icon;
+  }
   const s = document.createElement('span');
   s.className = 'pick-es';
   s.textContent = es;
@@ -206,7 +219,7 @@ function buildChooser() {
   for (const f of FAMOUS) {
     $('famousGrid').append(pickButton(f.icon, f.name, f.en, () => {
       startAltar({ name: f.name, famous: f.id });
-    }, f.es));
+    }, f.es, f.photo));
   }
 
   $('personForm').addEventListener('submit', (ev) => {
@@ -324,11 +337,12 @@ function openAltar(a) {
 
 function renderFrame() {
   const inner = $('photoInner');
-  if (current.photo) {
+  const famousPhoto = own(FAMOUS_BY_ID, current.famous)?.photo || '';
+  if (current.photo || famousPhoto) {
     const img = document.createElement('img');
     img.className = 'photo-img';
     img.alt = '';
-    img.src = current.photo;
+    img.src = current.photo || famousPhoto;
     inner.replaceChildren(img);
   } else {
     const icon = document.createElement('span');
@@ -1084,6 +1098,24 @@ $('enToggle').addEventListener('click', () => {
   setEnglish(englishOn);
 });
 $('homeBtn').addEventListener('click', goHome);
+// Back: from the altar to choosing a person, from choosing to the welcome screen.
+function goBack() {
+  if (!$('screenAltar').hidden) {
+    resetChooser();
+    show('screenChoose');
+  } else {
+    goHome();
+  }
+}
+$('backBtn').addEventListener('click', goBack);
+history.replaceState({ screen: 'screenHome' }, '');
+window.addEventListener('popstate', (ev) => {
+  const screen = ev.state?.screen || 'screenHome';
+  if (screen === 'screenAltar' && !current) { show('screenChoose', true); return; }
+  if (screen === 'screenHome') renderSaved();
+  if (screen === 'screenChoose') resetChooser();
+  show(screen, true);
+});
 $('startBtn').addEventListener('click', () => {
   resetChooser();
   show('screenChoose');
