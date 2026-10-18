@@ -611,3 +611,56 @@ body.no-en .en { display: none !important; }
 .en-toggle-state { font-weight: 700; font-size: 15px; }
 .en-toggle-hint { font-size: 13px; color: var(--muted); }
 .en-toggle[aria-pressed="true"] { border-color: var(--marigold); }
+
+/* ---------- loved one's photo ---------- */
+
+.file-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.file-btn { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+.file-input:focus-visible + .file-btn { outline: 3px solid var(--marigold); outline-offset: 2px; }
+.field-label { font-weight: 600; margin-top: 8px; }
+.field-note { margin: 0; font-size: 14px; color: var(--muted); }
+.photo-pick { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.photo-preview { width: 72px; height: 88px; object-fit: cover; border: 4px solid var(--wood); border-radius: 3px; }
+.photo-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.photo-actions { display: grid; justify-items: center; gap: 8px; margin: 14px 0 6px; }
+.photo-actions .btn { min-width: 220px; }
+
+/* ---------- save and share ---------- */
+
+.dock-foot { flex-wrap: wrap; }
+.dock-foot .btn { flex: 1 1 auto; }
+@media (max-width: 600px) {
+  .dock-foot .count { flex: 1 1 100%; }
+}
+
+.share { text-align: left; }
+.share h2 { text-align: center; font-size: 26px; }
+.share-preview { position: relative; display: grid; place-items: center; min-height: 160px; margin: 12px 0; }
+.share-preview img { max-width: 100%; max-height: 38vh; border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); }
+.share-preview img:not([src]) { display: none; }
+.share-busy {
+  position: absolute;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(14, 7, 12, 0.85);
+  text-align: center;
+}
+.choices { border: 0; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+.choices legend { font-weight: 700; margin-bottom: 6px; padding: 0; }
+.choice-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 12px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+}
+.choice-row:has(input:checked) { border-color: var(--marigold); background: #3a2340; }
+.choice-row input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--marigold); flex: 0 0 auto; }
+.choice-row .detail { display: block; color: var(--text); font-size: 15px; }
+.choice-row .en { font-size: 13px; }
+.share .card-actions { margin-top: 16px; }
+.share-tip { font-size: 15px; margin: 12px 0 0; }

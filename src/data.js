@@ -25,6 +25,9 @@ const ART = {
   tamarindo: fresca('#8a5a2b'),
 };
 
+// Candle colors, in the order candles are drawn (left to right, back to front)
+export const WAX = ['#c2185b', '#e65100', '#6a1b9a', '#f9a825', '#ad1457', '#2e7d32', '#1565c0'];
+
 export const CATEGORIES = [
   { id: 'esenciales', es: 'Lo esencial', en: 'Essentials' },
   { id: 'tradicion', es: 'Tradición', en: 'Tradition' },
@@ -36,7 +39,7 @@ export const CATEGORIES = [
 
 // tier: where a tapped offering goes (1 = top step, 3 = bottom step, 4 = floor, 0 = hangs above)
 const o = (id, cat, tier, max, look, es, say, en, core, tail, sentenceEn, why) => ({
-  id, cat, tier, max, ...(look.length > 3 ? { art: look } : { emoji: look }), es, say, en, core, tail, sentenceEn, why,
+  id, cat, tier, max, ...(ART[look] ? { art: look } : { emoji: look }), es, say, en, core, tail, sentenceEn, why,
 });
 
 export const OFFERINGS = [

@@ -1,7 +1,8 @@
 import {
   CATEGORIES, OFFERINGS, PHOTO, OFFERING_BY_ID, RELATIONS, FAMOUS,
-  RELATION_BY_ID, FAMOUS_BY_ID, iconHTML,
+  RELATION_BY_ID, FAMOUS_BY_ID, iconHTML, WAX,
 } from './data.js';
+import { renderAltar as drawAltarImage, fileName } from './snapshot.js';
 
 const $ = (id) => document.getElementById(id);
 const STORE_KEY = 'mi_ofrenda_altars';
@@ -23,7 +24,6 @@ const SLOTS = {
   4: [30, 66, 102, 138, 262, 298, 334, 370],
 };
 const PHOTO_X = [160, 240]; // keep the photo on the top step uncovered
-const WAX = ['#c2185b', '#e65100', '#6a1b9a', '#f9a825', '#ad1457', '#2e7d32', '#1565c0'];
 
 // Offerings renamed since the first version, so altars saved then still open
 const RENAMED = { refresco: 'refrescos' };
@@ -76,9 +76,15 @@ function cleanAltar(a) {
     relation: RELATION_BY_ID[a.relation] ? a.relation : '',
     famous: FAMOUS_BY_ID[a.famous] ? a.famous : '',
     memory: text(a.memory, 200),
+    photo: isPhoto(a.photo) ? a.photo : '',
     items,
     updated: Number.isFinite(a.updated) ? a.updated : Date.now(),
   };
+}
+
+// Photos are stored as small JPEG pictures made on this device (see readPhoto)
+function isPhoto(v) {
+  return typeof v === 'string' && v.length < 700000 && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(v);
 }
 
 function saveAltars() {
@@ -197,16 +203,72 @@ function buildChooser() {
     if (!pickedRelation) return;
     const typed = $('nameInput').value.trim();
     const name = typed || capitalize(pickedRelation.es);
-    startAltar({ name, relation: pickedRelation.id, memory: $('memoryInput').value.trim() });
+    startAltar({ name, relation: pickedRelation.id, memory: $('memoryInput').value.trim(), photo: pendingPhoto });
   });
+
+  $('photoFile').addEventListener('change', async (ev) => {
+    const photo = await photoFromInput(ev.target);
+    if (!photo) return;
+    pendingPhoto = photo;
+    $('photoPreview').src = photo;
+    $('photoPreview').hidden = false;
+    $('photoClear').hidden = false;
+    $('photoFileText').textContent = '📷 Cambiar la foto';
+    $('photoFileEn').textContent = 'Change the photo';
+  });
+  $('photoClear').addEventListener('click', clearPendingPhoto);
 }
 
-function startAltar({ name, relation = '', famous = '', memory = '' }) {
-  openAltar(cleanAltar({ id: newId('a'), name, relation, famous, memory, items: [] }));
+function startAltar({ name, relation = '', famous = '', memory = '', photo = '' }) {
+  openAltar(cleanAltar({ id: newId('a'), name, relation, famous, memory, photo, items: [] }));
   saveCurrent();
 }
 
+let pendingPhoto = '';
+
+function clearPendingPhoto() {
+  pendingPhoto = '';
+  $('photoPreview').hidden = true;
+  $('photoPreview').removeAttribute('src');
+  $('photoClear').hidden = true;
+  $('photoFileText').textContent = '📷 Elegir una foto';
+  $('photoFileEn').textContent = 'Choose a photo';
+}
+
+// Shrink the chosen picture to a small JPEG on this device. Redrawing it also drops hidden
+// camera details such as location.
+async function readPhoto(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const scale = Math.min(1, 640 / Math.max(img.naturalWidth, img.naturalHeight));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(img.naturalWidth * scale);
+    canvas.height = Math.round(img.naturalHeight * scale);
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg', 0.82);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function photoFromInput(input) {
+  const file = input.files?.[0];
+  input.value = '';
+  if (!file) return '';
+  try {
+    if (!file.type.startsWith('image/')) throw new Error('not an image');
+    return await readPhoto(file);
+  } catch {
+    say('No se pudo abrir esa foto. Prueba con una foto JPG o PNG.', 'That photo couldn\'t be opened. Try a JPG or PNG photo.');
+    return '';
+  }
+}
+
 function resetChooser() {
+  clearPendingPhoto();
   pickedRelation = null;
   $('personForm').reset();
   $('personForm').hidden = true;
@@ -235,13 +297,43 @@ function openAltar(a) {
   $('altarName').textContent = a.name;
   $('altarMemory').hidden = !a.memory;
   $('altarMemory').textContent = a.memory ? `“${a.memory}”` : '';
-  $('photoIcon').textContent = personIcon(a);
+  renderFrame();
   $('photoName').textContent = a.name;
   $('photoBtn').setAttribute('aria-label', `Foto de ${a.name}${personSubtitle(a) ? `, ${personSubtitle(a)}` : ''}. Toca para aprender la palabra.`);
   $('caption').hidden = true;
   renderTabs();
   show('screenAltar');
   renderAltar();
+}
+
+function renderFrame() {
+  const inner = $('photoInner');
+  if (current.photo) {
+    const img = document.createElement('img');
+    img.className = 'photo-img';
+    img.alt = '';
+    img.src = current.photo;
+    inner.replaceChildren(img);
+  } else {
+    const icon = document.createElement('span');
+    icon.className = 'photo-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = personIcon(current);
+    inner.replaceChildren(icon);
+  }
+}
+
+function setFramePhoto(photo) {
+  current.photo = photo;
+  saveCurrent();
+  renderFrame();
+  updatePhotoActions();
+}
+
+function updatePhotoActions() {
+  $('frameClear').hidden = !current.photo;
+  $('frameFileText').textContent = current.photo ? '📷 Cambiar la foto' : '📷 Subir una foto';
+  $('frameFileEn').textContent = current.photo ? 'Change the photo' : 'Upload a photo';
 }
 
 function countOf(id) {
@@ -656,6 +748,8 @@ function openCard(o, uid = null) {
   $('cardWhy').textContent = o.whyEs;
   $('cardWhyEn').textContent = o.why;
   $('removeBtn').hidden = !uid;
+  $('photoActions').hidden = o !== PHOTO;
+  if (o === PHOTO) updatePhotoActions();
   $('card').showModal();
   speakWord(o);
 }
@@ -709,7 +803,8 @@ function deviceSpeak(text) {
   speechSynthesis.speak(u);
 }
 
-function play(url, fallbackText) {
+// onEnd runs after a recorded clip finishes (not after the device voice)
+function play(url, fallbackText, onEnd) {
   clip?.pause();
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   if (missingClips.has(url)) {
@@ -726,6 +821,7 @@ function play(url, fallbackText) {
     if (clip === audio) deviceSpeak(fallbackText);
   };
   audio.addEventListener('error', fail, { once: true });
+  if (onEnd) audio.addEventListener('ended', () => { if (clip === audio) onEnd(); }, { once: true });
   audio.play().catch((err) => {
     if (err.name !== 'NotAllowedError' && err.name !== 'AbortError') fail();
   });
@@ -735,8 +831,103 @@ function speakWord(o) {
   play(`audio/words/${o.id}.mp3`, o.es);
 }
 
+// The recording says the sentence without a name ("Pongo la foto."), since names are typed by
+// the user; the device voice then finishes it with the name ("de Rosa").
 function speakSentence(o) {
-  play(`audio/sentences/${o.id}.mp3`, fullSentence(o));
+  play(`audio/sentences/${o.id}.mp3`, fullSentence(o), () => deviceSpeak(fill(o.tail)));
+}
+
+// ---------- save and share as a picture ----------
+
+const shot = { blob: null, url: '', name: '', type: '', token: 0 };
+const canShareFiles = (() => {
+  try {
+    return Boolean(navigator.canShare?.({ files: [new File(['x'], 'x.png', { type: 'image/png' })] }));
+  } catch {
+    return false;
+  }
+})();
+
+function shotChoice(name) {
+  return document.querySelector(`input[name="${name}"]:checked`).value;
+}
+
+async function prepareShot() {
+  const token = ++shot.token;
+  const sizeKey = shotChoice('shotSize');
+  const ext = shotChoice('shotType');
+  for (const id of ['shareBtn', 'downloadBtn', 'emailBtn']) $(id).disabled = true;
+  $('shareBusy').hidden = false;
+  try {
+    const canvas = await drawAltarImage({
+      altar: current,
+      icon: personIcon(current),
+      sizeKey,
+      roomSvg: document.querySelector('.room').outerHTML,
+      altarSvg: $('altarArt').outerHTML,
+      defs: document.querySelector('.defs defs').innerHTML,
+    });
+    const type = ext === 'png' ? 'image/png' : 'image/jpeg';
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('no image'))), type, 0.9);
+    });
+    if (token !== shot.token) return;
+    if (shot.url) URL.revokeObjectURL(shot.url);
+    Object.assign(shot, { blob, type, url: URL.createObjectURL(blob), name: fileName(current.name, sizeKey, ext) });
+    $('sharePreview').src = shot.url;
+    $('shareBusy').hidden = true;
+    for (const id of ['shareBtn', 'downloadBtn', 'emailBtn']) $(id).disabled = false;
+  } catch {
+    if (token !== shot.token) return;
+    $('shareBusy').hidden = true;
+    say('No se pudo crear la imagen en este navegador. Prueba con Safari o Chrome actualizados, o toma una captura de pantalla.',
+      'The picture couldn\'t be made in this browser. Try an up-to-date Safari or Chrome, or take a screenshot.');
+  }
+}
+
+function openShare() {
+  $('shareBtn').hidden = !canShareFiles;
+  $('emailBtn').hidden = canShareFiles;
+  $('shareTip').replaceChildren(...(canShareFiles
+    ? ['En el menú de compartir elige Instagram, WhatsApp, Facebook, TikTok, Mensajes o Correo. En iPhone, «Guardar imagen» la guarda en Fotos.',
+      english('In the share menu, pick Instagram, WhatsApp, Facebook, TikTok, Messages or Mail. On iPhone, "Save Image" puts it in Photos.')]
+    : ['Descarga la imagen y súbela a Instagram, Facebook, TikTok o WhatsApp Web, o adjúntala a un correo.',
+      english('Download the picture and post it on Instagram, Facebook, TikTok or WhatsApp Web, or attach it to an email.')]));
+  $('shareDialog').showModal();
+  prepareShot();
+}
+
+function downloadShot() {
+  const a = document.createElement('a');
+  a.href = shot.url;
+  a.download = shot.name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  say(`Se descargó ${shot.name}.`, `Downloaded ${shot.name}.`);
+}
+
+async function shareShot() {
+  const file = new File([shot.blob], shot.name, { type: shot.type });
+  try {
+    await navigator.share({
+      files: [file],
+      title: `Mi ofrenda para ${current.name}`,
+      text: `Hice una ofrenda para ${current.name} y aprendí español. #DíaDeMuertos`,
+    });
+  } catch (err) {
+    if (err?.name === 'AbortError') return; // the person closed the share menu
+    say('No se pudo abrir el menú de compartir. Usa «Descargar» y comparte la imagen desde tus fotos.',
+      'The share menu couldn\'t open. Use "Download" and share the picture from your photos.');
+  }
+}
+
+function emailShot() {
+  downloadShot();
+  const subject = `Mi ofrenda para ${current.name}`;
+  const body = `Te comparto la ofrenda que hice para ${current.name} (la imagen va adjunta).\n\nhttps://${'bri-an-pmp.github.io/mi-ofrenda/'}`;
+  say('Se descargó la imagen. Adjúntala al correo que se abrió.', 'The picture was downloaded. Attach it to the email that opened.');
+  window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 // ---------- practice quiz ----------
@@ -869,6 +1060,24 @@ $('startBtn').addEventListener('click', () => {
   show('screenChoose');
 });
 $('photoBtn').addEventListener('click', () => openCard(PHOTO));
+$('frameFile').addEventListener('change', async (ev) => {
+  const photo = await photoFromInput(ev.target);
+  if (!photo) return;
+  setFramePhoto(photo);
+  say('Se puso la foto en el altar.', 'The photo is on the altar.');
+});
+$('frameClear').addEventListener('click', () => {
+  setFramePhoto('');
+  say('Se quitó la foto.', 'The photo was removed.');
+});
+$('shareOpen').addEventListener('click', openShare);
+$('shareBtn').addEventListener('click', shareShot);
+$('downloadBtn').addEventListener('click', downloadShot);
+$('emailBtn').addEventListener('click', emailShot);
+$('closeShare').addEventListener('click', () => $('shareDialog').close());
+for (const input of document.querySelectorAll('input[name="shotSize"], input[name="shotType"]')) {
+  input.addEventListener('change', prepareShot);
+}
 $('practiceBtn').addEventListener('click', startQuiz);
 $('speakBtn').addEventListener('click', () => speakWord(cardItem));
 $('speakSentenceBtn').addEventListener('click', () => speakSentence(cardItem));

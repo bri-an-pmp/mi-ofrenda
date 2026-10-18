@@ -7,7 +7,9 @@ Build a Día de los Muertos altar for someone you love and learn Spanish. Everyt
 1. Choose who to remember: a family member, a friend, a pet, or a well-known person.
 2. Drag offerings onto the altar (or tap them). They fall onto the step below where you let go; drag one out of the room to take it off. Candles light up the dark room.
 3. Each offering shows its Spanish word, how to say it (and says it aloud), a sentence using it with the person's name, and why it belongs on an ofrenda.
-4. Practice the words you placed with a short quiz.
+4. Add a photo of the person to the frame (it stays on the device, shrunk and without camera location data).
+5. Save or share the altar as a picture: Publicación 4:5 (1080×1350), Historia 9:16 (1080×1920) or Cuadrada 1:1 (1080×1080), as JPG or PNG. On phones, Compartir opens the share menu (Instagram, WhatsApp, Facebook, TikTok, Messages, Mail, Save Image).
+6. Practice the words you placed with a short quiz.
 
 Altars are saved in the browser on this device.
 
@@ -19,7 +21,7 @@ Altars are saved in the browser on this device.
 
 ## Real voice recordings
 
-The app plays recorded clips from `public/audio/words/` and `public/audio/sentences/` when they exist, and uses the device's built-in voice when they don't. Each sentence clip says the sentence without the person's name ("Le enciendo una vela."), because names are typed by the user.
+The app plays recorded clips from `public/audio/words/` and `public/audio/sentences/` when they exist, and uses the device's built-in voice when they don't. Each sentence clip says the sentence without the person's name ("Le enciendo una vela."), because names are typed by the user; the device voice then adds the ending with the name ("a Rosa").
 
 To make the clips with ElevenLabs:
 
@@ -36,7 +38,8 @@ To record a real person instead, run `npm run voice -- --list` to see every file
 
 - `index.html`: the three screens (welcome, choose a person, altar), the word card and the quiz.
 - `src/data.js`: all content. Offerings, people, pets and famous figures. Add a new offering here.
-- `src/main.js`: how it works (drag and drop, candlelight, saving, speech, quiz).
+- `src/main.js`: how it works (drag and drop, candlelight, photos, saving, sharing, speech, quiz).
+- `src/snapshot.js`: draws the altar as a picture for saving and sharing.
 - `scripts/make-voice.mjs`: makes the voice clips with ElevenLabs.
 - `src/style.css`: the look.
 - `vite.config.js`: adds the security policy to the built page.

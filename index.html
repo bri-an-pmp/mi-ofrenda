@@ -59,6 +59,14 @@
       <p id="pickedLabel" class="picked"></p>
       <label for="nameInput">Su nombre <span class="en" lang="en">Their name</span></label>
       <input id="nameInput" type="text" maxlength="40" autocomplete="off" placeholder="Por ejemplo: Rosa">
+      <span class="field-label">Su foto (opcional) <span class="en" lang="en">Their photo (optional)</span></span>
+      <div class="photo-pick">
+        <img id="photoPreview" class="photo-preview" alt="" hidden>
+        <input id="photoFile" class="file-input" type="file" accept="image/*">
+        <label for="photoFile" class="btn file-btn"><span id="photoFileText">📷 Elegir una foto</span> <span id="photoFileEn" class="en" lang="en">Choose a photo</span></label>
+        <button id="photoClear" class="btn small" type="button" hidden>Quitar <span class="en" lang="en">Remove</span></button>
+      </div>
+      <p class="field-note">La foto se queda solo en este dispositivo. <span class="en" lang="en">The photo stays only on this device.</span></p>
       <label for="memoryInput">Un recuerdo (opcional) <span class="en" lang="en">A memory of them (optional)</span></label>
       <textarea id="memoryInput" rows="2" maxlength="200" placeholder="Por ejemplo: Cantaba mientras cocinaba."></textarea>
       <button class="btn primary" type="submit">Ir a la ofrenda <span class="en" lang="en">Go to the altar</span></button>
@@ -133,7 +141,7 @@
           <g id="petals" opacity="0"></g>
         </svg>
         <button id="photoBtn" class="photo" type="button">
-          <span class="photo-inner"><span id="photoIcon" class="photo-icon" aria-hidden="true"></span></span>
+          <span id="photoInner" class="photo-inner"></span>
           <span id="photoName" class="photo-name"></span>
         </button>
         <div id="placed" class="placed"></div>
@@ -166,6 +174,7 @@
       <div id="tray" class="tray" role="tabpanel"></div>
       <div class="dock-foot">
         <p id="count" class="count"></p>
+        <button id="shareOpen" class="btn small primary" type="button">📷 Guardar y compartir <span class="en" lang="en">Save &amp; share</span></button>
         <button id="practiceBtn" class="btn small" type="button">Practicar <span class="en" lang="en">Practice my words</span></button>
       </div>
     </div>
@@ -184,11 +193,51 @@
     <p id="cardSentenceEn" class="en" lang="en"></p>
     <button id="speakSentenceBtn" class="btn small" type="button">🔊 Escuchar la frase <span class="en" lang="en">Hear the sentence</span></button>
   </div>
+  <div id="photoActions" class="photo-actions" hidden>
+    <input id="frameFile" class="file-input" type="file" accept="image/*">
+    <label for="frameFile" class="btn file-btn"><span id="frameFileText">📷 Subir una foto</span> <span id="frameFileEn" class="en" lang="en">Upload a photo</span></label>
+    <button id="frameClear" class="btn" type="button" hidden>Quitar la foto <span class="en" lang="en">Remove the photo</span></button>
+    <p class="field-note">La foto se queda solo en este dispositivo. <span class="en" lang="en">The photo stays only on this device.</span></p>
+  </div>
   <p id="cardWhy" class="why"></p>
   <p id="cardWhyEn" class="why en" lang="en"></p>
   <div class="card-actions">
     <button id="removeBtn" class="btn" type="button">Quitar del altar <span class="en" lang="en">Remove from altar</span></button>
     <button id="closeCard" class="btn primary" type="button">Listo <span class="en" lang="en">Done</span></button>
+  </div>
+</dialog>
+
+<!-- Save and share the altar as a picture -->
+<dialog id="shareDialog" class="card share" aria-labelledby="shareTitle">
+  <h2 id="shareTitle">Guarda y comparte tu ofrenda <span class="en" lang="en">Save and share your altar</span></h2>
+  <div class="share-preview">
+    <img id="sharePreview" alt="Vista previa de la imagen de tu ofrenda">
+    <p id="shareBusy" class="share-busy" aria-live="polite">Preparando la imagen… <span class="en" lang="en">Preparing the image…</span></p>
+  </div>
+  <fieldset class="choices">
+    <legend>Tamaño <span class="en" lang="en">Size</span></legend>
+    <label class="choice-row"><input type="radio" name="shotSize" value="publicacion" checked>
+      <span><b>Publicación · 4:5</b> <span class="detail">Instagram y Facebook, iMessage, correo</span> <span class="en" lang="en">Instagram and Facebook posts, iMessage, email</span></span></label>
+    <label class="choice-row"><input type="radio" name="shotSize" value="historia">
+      <span><b>Historia · 9:16</b> <span class="detail">Historias de Instagram y Facebook, TikTok, estado de WhatsApp</span> <span class="en" lang="en">Instagram and Facebook Stories, TikTok, WhatsApp status</span></span></label>
+    <label class="choice-row"><input type="radio" name="shotSize" value="cuadrada">
+      <span><b>Cuadrada · 1:1</b> <span class="detail">Chats de WhatsApp, Facebook, cualquier lugar</span> <span class="en" lang="en">WhatsApp chats, Facebook, anywhere</span></span></label>
+  </fieldset>
+  <fieldset class="choices">
+    <legend>Formato <span class="en" lang="en">File type</span></legend>
+    <label class="choice-row"><input type="radio" name="shotType" value="jpg" checked>
+      <span><b>JPG</b> <span class="detail">Más ligera, ideal para compartir y para correo</span> <span class="en" lang="en">Smaller, best for sharing and email</span></span></label>
+    <label class="choice-row"><input type="radio" name="shotType" value="png">
+      <span><b>PNG</b> <span class="detail">La máxima calidad</span> <span class="en" lang="en">Highest quality</span></span></label>
+  </fieldset>
+  <div class="card-actions">
+    <button id="shareBtn" class="btn primary" type="button" hidden disabled>Compartir <span class="en" lang="en">Share: Instagram, WhatsApp, Messages…</span></button>
+    <button id="downloadBtn" class="btn" type="button" disabled>Descargar <span class="en" lang="en">Download</span></button>
+    <button id="emailBtn" class="btn" type="button" hidden disabled>Correo <span class="en" lang="en">Email</span></button>
+  </div>
+  <p id="shareTip" class="share-tip"></p>
+  <div class="card-actions">
+    <button id="closeShare" class="btn" type="button">Cerrar <span class="en" lang="en">Close</span></button>
   </div>
 </dialog>
 
