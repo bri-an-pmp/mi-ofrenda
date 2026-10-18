@@ -299,7 +299,7 @@ function openAltar(a) {
   $('altarMemory').textContent = a.memory ? `“${a.memory}”` : '';
   renderFrame();
   $('photoName').textContent = a.name;
-  $('photoBtn').setAttribute('aria-label', `Foto de ${a.name}${personSubtitle(a) ? `, ${personSubtitle(a)}` : ''}. Toca para aprender la palabra.`);
+  $('photoBtn').setAttribute('aria-label', `Foto de ${a.name}${personSubtitle(a) ? `, ${personSubtitle(a)}` : ''}. Toca para aprender la palabra o poner una foto.`);
   $('caption').hidden = true;
   renderTabs();
   show('screenAltar');
@@ -548,6 +548,7 @@ function renderTabs() {
     b.id = `tab-${c.id}`;
     b.className = 'tab';
     b.setAttribute('aria-selected', String(c.id === activeTab));
+    b.setAttribute('aria-controls', 'tray');
     b.tabIndex = c.id === activeTab ? 0 : -1;
     b.append(c.es, english(c.en, 'tab-en'));
     b.addEventListener('click', () => selectTab(c.id));
@@ -569,6 +570,7 @@ function selectTab(id, focus = false) {
 
 function renderTray() {
   const tray = $('tray');
+  const focusedId = tray.contains(document.activeElement) ? document.activeElement.dataset.id : null;
   tray.setAttribute('aria-labelledby', `tab-${activeTab}`);
   tray.replaceChildren();
   for (const o of OFFERINGS.filter((x) => x.cat === activeTab)) {
@@ -592,13 +594,15 @@ function renderTray() {
       b.append(badge);
     }
     b.addEventListener('pointerdown', (ev) => pressStart(ev, o, null));
+    b.dataset.id = o.id;
     b.addEventListener('click', () => {
       if (consumeDrag()) return;
-      if (countOf(o.id) < o.max) addOffering(o, autoSpot(o, current.items));
+      if (countOf(o.id) === 0) addOffering(o, autoSpot(o, current.items));
       else openCard(o, lastUid(o.id));
     });
     tray.append(b);
   }
+  if (focusedId) tray.querySelector(`[data-id="${focusedId}"]`)?.focus();
 }
 
 function addOffering(o, spot, fromY) {
@@ -613,6 +617,7 @@ function addOffering(o, spot, fromY) {
   renderAltar();
   if (fromY !== undefined) fall(item, fromY);
   showCaption(o, item.uid);
+  announce(`${o.es} (${o.en}): en el altar.`);
   speakWord(o);
 }
 
@@ -665,7 +670,6 @@ function dragMove(ev) {
     press.src.setPointerCapture?.(press.id);
     if (press.uid) press.src.classList.add('lifted');
     document.body.classList.add('dragging');
-    $('caption').hidden = true;
   }
   ev.preventDefault();
   press.ghost.style.left = `${ev.clientX}px`;
@@ -711,7 +715,6 @@ window.addEventListener('pointercancel', dragEnd);
 
 // ---------- caption and word card ----------
 
-let captionTimer;
 let captionFor = null;
 
 function showCaption(o, uid) {
@@ -722,8 +725,6 @@ function showCaption(o, uid) {
   $('captionWord').textContent = o.es;
   $('captionSub').replaceChildren(o.say, ' ', english(o.en));
   $('caption').hidden = false;
-  clearTimeout(captionTimer);
-  captionTimer = setTimeout(() => { $('caption').hidden = true; }, 8000);
 }
 
 function fill(text) {
@@ -748,6 +749,9 @@ function openCard(o, uid = null) {
   $('cardWhy').textContent = o.whyEs;
   $('cardWhyEn').textContent = o.why;
   $('removeBtn').hidden = !uid;
+  const more = o !== PHOTO && countOf(o.id) > 0 && countOf(o.id) < o.max;
+  $('addAnotherBtn').hidden = !more;
+  if (more) $('addAnotherEn').textContent = `Add one more (${countOf(o.id)} of ${o.max} now)`;
   $('photoActions').hidden = o !== PHOTO;
   if (o === PHOTO) updatePhotoActions();
   $('card').showModal();
@@ -760,6 +764,9 @@ function removeItem(uid) {
   current.items = current.items.filter((i) => i.uid !== uid);
   saveCurrent();
   renderAltar();
+  if (!document.activeElement || document.activeElement === document.body) {
+    ($('tray').querySelector(`[data-id="${item.id}"]`) || $(`tab-${activeTab}`))?.focus();
+  }
   const es = OFFERING_BY_ID[item.id].es;
   say(`Quitaste ${es} del altar.`, `${es} was taken off the altar.`);
 }
@@ -1031,6 +1038,12 @@ function setEnglish(on) {
   }
 }
 
+// Screen-reader-only message (no visible toast)
+function announce(text) {
+  $('srLive').textContent = '';
+  requestAnimationFrame(() => { $('srLive').textContent = text; });
+}
+
 function capitalize(s) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -1086,6 +1099,10 @@ $('removeBtn').addEventListener('click', () => {
   removeItem(cardUid);
 });
 $('closeCard').addEventListener('click', () => $('card').close());
+$('addAnotherBtn').addEventListener('click', () => {
+  $('card').close();
+  addOffering(cardItem, autoSpot(cardItem, current.items));
+});
 $('captionSpeak').addEventListener('click', () => speakWord(captionFor.o));
 $('captionMore').addEventListener('click', () => openCard(captionFor.o, captionFor.uid));
 $('quizNext').addEventListener('click', nextQuestion);

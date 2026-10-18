@@ -154,26 +154,27 @@
       <div class="stage-title">
         <h1><span class="for">La ofrenda para</span> <span id="altarName"></span></h1>
         <p id="altarMemory" class="memory" hidden></p>
+        <p id="count" class="count"></p>
       </div>
       <p id="darkHint" class="dark-hint">Está oscuro. Enciende una <b>vela</b> para ver la ofrenda. <span class="en" lang="en">It's dark. Light a candle to see the altar.</span></p>
 
-      <div id="caption" class="caption" aria-live="polite" hidden>
-        <span id="captionIcon" class="caption-icon" aria-hidden="true"></span>
-        <span class="caption-text">
-          <span id="captionWord" class="caption-word"></span>
-          <span id="captionSub" class="caption-sub"></span>
-        </span>
-        <button id="captionSpeak" class="icon-btn" type="button" aria-label="Escuchar">🔊</button>
-        <button id="captionMore" class="btn small primary" type="button">Aprende más <span class="en" lang="en">Learn more</span></button>
-      </div>
+
     </div>
 
     <div class="dock">
-      <p class="hint"><b>Arrastra</b> una ofrenda al altar o <b>tócala</b>. Toca cualquier cosa del altar para aprender más. <span class="en" lang="en">Drag an offering onto the altar, or tap it. Tap anything on the altar to learn more.</span></p>
+      <div id="caption" class="caption" hidden>
+      <span id="captionIcon" class="caption-icon" aria-hidden="true"></span>
+      <span class="caption-text">
+        <span id="captionWord" class="caption-word"></span>
+        <span id="captionSub" class="caption-sub"></span>
+      </span>
+      <button id="captionSpeak" class="icon-btn" type="button" aria-label="Escuchar">🔊</button>
+      <button id="captionMore" class="btn small primary" type="button">Aprende más <span class="en" lang="en">Learn more</span></button>
+    </div>
+      <p class="hint"><b>Arrastra</b> o <b>toca</b> una ofrenda. Toca el altar para aprender más. <span class="en" lang="en">Drag or tap an offering. Tap the altar to learn more.</span></p>
       <div id="tabs" class="tabs" role="tablist" aria-label="Tipos de ofrendas"></div>
       <div id="tray" class="tray" role="tabpanel"></div>
       <div class="dock-foot">
-        <p id="count" class="count"></p>
         <button id="shareOpen" class="btn small primary" type="button">📷 Guardar y compartir <span class="en" lang="en">Save &amp; share</span></button>
         <button id="practiceBtn" class="btn small" type="button">Practicar <span class="en" lang="en">Practice my words</span></button>
       </div>
@@ -202,6 +203,7 @@
   <p id="cardWhy" class="why"></p>
   <p id="cardWhyEn" class="why en" lang="en"></p>
   <div class="card-actions">
+    <button id="addAnotherBtn" class="btn primary" type="button" hidden>Poner una más <span id="addAnotherEn" class="en" lang="en">Add one more</span></button>
     <button id="removeBtn" class="btn" type="button">Quitar del altar <span class="en" lang="en">Remove from altar</span></button>
     <button id="closeCard" class="btn primary" type="button">Listo <span class="en" lang="en">Done</span></button>
   </div>
@@ -255,6 +257,7 @@
 </dialog>
 
 <p id="status" class="status" role="status" aria-live="polite"></p>
+<p id="srLive" class="sr-only" aria-live="polite"></p>
 
 <script type="module" src="/src/main.js"></script>
 </body>
