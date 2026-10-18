@@ -1,3 +1,4 @@
+import './frame-guard.js';
 import {
   CATEGORIES, OFFERINGS, PHOTO, OFFERING_BY_ID, RELATIONS, FAMOUS,
   RELATION_BY_ID, FAMOUS_BY_ID, iconHTML, WAX,
@@ -28,6 +29,15 @@ const PHOTO_X = [160, 240]; // keep the photo on the top step uncovered
 // Offerings renamed since the first version, so altars saved then still open
 const RENAMED = { refresco: 'refrescos' };
 
+// Saved data can be edited outside the app, so lookups only accept the app's own keys
+// (never inherited ones like "__proto__"), IDs must look like ours, and sizes are capped.
+const own = (map, key) => (typeof key === 'string' && Object.hasOwn(map, key) ? map[key] : undefined);
+const ID_FORMAT = /^[a-z0-9]{1,32}$/i;
+const MAX_ALTARS = 100;
+const MAX_PHOTO_BYTES = 25 * 1024 * 1024;
+const MAX_PHOTO_PIXELS = 40e6;
+const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic', 'image/heif'];
+
 let altars = loadAltars();
 let current = null;     // the altar being decorated
 let activeTab = 'esenciales';
@@ -39,7 +49,7 @@ let cardUid = null;     // which placed copy the card is about (to remove it)
 function loadAltars() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
-    return Array.isArray(raw) ? raw.map(cleanAltar).filter(Boolean) : [];
+    return Array.isArray(raw) ? raw.slice(0, MAX_ALTARS).map(cleanAltar).filter(Boolean) : [];
   } catch {
     return [];
   }
@@ -57,24 +67,25 @@ function clamp(n, lo, hi) {
 // Altars saved by the first version stored offerings as a plain list of names; those still open
 // and get placed automatically.
 function cleanAltar(a) {
-  if (!a || typeof a !== 'object' || typeof a.id !== 'string') return null;
+  if (!a || typeof a !== 'object' || typeof a.id !== 'string' || !ID_FORMAT.test(a.id)) return null;
   const text = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
   const items = [];
   for (const raw of Array.isArray(a.items) ? a.items : []) {
     const rawId = typeof raw === 'string' ? raw : raw?.id;
-    const id = RENAMED[rawId] || rawId;
+    const id = own(RENAMED, rawId) || rawId;
     const o = OFFERINGS.find((x) => x.id === id);
     if (!o || items.filter((i) => i.id === id).length >= o.max) continue;
     const placed = raw && typeof raw === 'object' && Number.isFinite(raw.x) && Number.isFinite(raw.y);
     const spot = placed ? { x: clamp(raw.x, 0, 400), y: clamp(raw.y, 0, 520) } : autoSpot(o, items);
-    const uid = raw && typeof raw.uid === 'string' ? raw.uid.slice(0, 24) : newId('i');
+    const uid = raw && typeof raw.uid === 'string' && ID_FORMAT.test(raw.uid) && !items.some((i) => i.uid === raw.uid)
+      ? raw.uid : newId('i');
     items.push({ uid, id, ...spot });
   }
   return {
     id: a.id,
     name: text(a.name, 40) || 'Alguien especial',
-    relation: RELATION_BY_ID[a.relation] ? a.relation : '',
-    famous: FAMOUS_BY_ID[a.famous] ? a.famous : '',
+    relation: own(RELATION_BY_ID, a.relation) ? a.relation : '',
+    famous: own(FAMOUS_BY_ID, a.famous) ? a.famous : '',
     memory: text(a.memory, 200),
     photo: isPhoto(a.photo) ? a.photo : '',
     items,
@@ -98,7 +109,7 @@ function saveAltars() {
 
 function saveCurrent() {
   current.updated = Date.now();
-  altars = [current, ...altars.filter((a) => a.id !== current.id)];
+  altars = [current, ...altars.filter((a) => a.id !== current.id)].slice(0, MAX_ALTARS);
   saveAltars();
 }
 
@@ -243,6 +254,7 @@ async function readPhoto(file) {
     const img = new Image();
     img.src = url;
     await img.decode();
+    if (img.naturalWidth * img.naturalHeight > MAX_PHOTO_PIXELS) throw new Error('too many pixels');
     const scale = Math.min(1, 640 / Math.max(img.naturalWidth, img.naturalHeight));
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(img.naturalWidth * scale);
@@ -259,7 +271,11 @@ async function photoFromInput(input) {
   input.value = '';
   if (!file) return '';
   try {
-    if (!file.type.startsWith('image/')) throw new Error('not an image');
+    if (!PHOTO_TYPES.includes(file.type)) throw new Error('not a photo');
+    if (file.size > MAX_PHOTO_BYTES) {
+      say('Esa foto es demasiado grande (más de 25 MB). Elige una más pequeña.', 'That photo is too large (over 25 MB). Choose a smaller one.');
+      return '';
+    }
     return await readPhoto(file);
   } catch {
     say('No se pudo abrir esa foto. Prueba con una foto JPG o PNG.', 'That photo couldn\'t be opened. Try a JPG or PNG photo.');
@@ -278,16 +294,16 @@ function resetChooser() {
 // ---------- the altar ----------
 
 function isPet(a) {
-  return RELATION_BY_ID[a.relation]?.kind === 'pet';
+  return own(RELATION_BY_ID, a.relation)?.kind === 'pet';
 }
 
 function personIcon(a) {
-  return RELATION_BY_ID[a.relation]?.icon || FAMOUS_BY_ID[a.famous]?.icon || '💛';
+  return own(RELATION_BY_ID, a.relation)?.icon || own(FAMOUS_BY_ID, a.famous)?.icon || '💛';
 }
 
 function personSubtitle(a) {
-  if (a.famous) return FAMOUS_BY_ID[a.famous].es;
-  const r = RELATION_BY_ID[a.relation];
+  if (a.famous) return own(FAMOUS_BY_ID, a.famous)?.es || '';
+  const r = own(RELATION_BY_ID, a.relation);
   return r && r.id !== 'otro' ? r.es : '';
 }
 

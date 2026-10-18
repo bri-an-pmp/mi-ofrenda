@@ -1,18 +1,20 @@
 import { defineConfig } from 'vite';
 
-// Content Security Policy for the built site: the page may only run its own code, and may only
-// talk to itself and nothing else. If anything ever slipped untrusted code into the page, the
+// Content Security Policy for the built site: the page may only run its own code and styles, and
+// may only talk to itself. If anything ever slipped untrusted code into the page, the
 // browser would refuse to run it or send data anywhere else. (Not used by the dev server, which
 // needs inline scripts for live reload.)
 const CSP = [
   "default-src 'self'",
   "script-src 'self'",
-  "style-src 'self' 'unsafe-inline'",
+  "style-src 'self'",
   "font-src 'self' data:",
   "img-src 'self' data: blob:",
   "media-src 'self' data: blob:",
   "connect-src 'self' blob:",
   "object-src 'none'",
+  "frame-src 'none'",
+  "worker-src 'none'",
   "base-uri 'self'",
   "form-action 'none'",
 ].join('; ');

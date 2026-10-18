@@ -46,6 +46,8 @@ h1:focus { outline: none; }
 h2 .es { display: inline; }
 .muted { color: var(--muted); }
 [hidden] { display: none !important; }
+.framed { padding: 24px 16px; font-size: 18px; }
+.framed a { color: var(--marigold); }
 
 /* ---------- controls ---------- */
 

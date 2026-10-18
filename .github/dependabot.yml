@@ -1,0 +1,11 @@
+# Weekly check for security updates to the build tools and the pinned GitHub Actions
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
