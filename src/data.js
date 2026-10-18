@@ -6,6 +6,9 @@
 
 // Small drawings for offerings that have no good emoji. Static strings only (never user text).
 // Shared gradients (flame, glassShade) live once in index.html.
+// A glass of agua fresca in a given color, with optional bits floating in it
+const fresca = (color, bits = '') => `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M30 3l-4 14" stroke="#e8418c" stroke-width="2.5" stroke-linecap="round"/><path d="M12 10h24l-3 32H15z" fill="#d8eef7" fill-opacity=".35" stroke="#e6f4fb" stroke-width="1.5"/><path d="M13.6 17h20.8l-2.4 24H16z" fill="${color}"/>${bits}<rect x="18" y="19" width="5" height="5" rx="1" fill="#fff" opacity=".45"/><rect x="25" y="22" width="5" height="5" rx="1" fill="#fff" opacity=".35"/><path d="M15 12l2 29" stroke="#fff" stroke-width="1.2" opacity=".5"/></svg>`;
+
 const ART = {
   vela: `<svg viewBox="0 0 48 64" aria-hidden="true"><path class="flame" d="M24 6c4 6 6 10 6 14a6 6 0 0 1-12 0c0-4 2-8 6-14z" fill="url(#fl)"/><rect x="23.2" y="20" width="1.6" height="5" fill="#2a1a10"/><rect x="11" y="24" width="26" height="38" rx="3" class="wax"/><rect x="11" y="24" width="26" height="38" rx="3" fill="url(#glassShade)" opacity=".55"/><rect x="14" y="27" width="3" height="32" rx="1.5" fill="#fff" opacity=".35"/><rect x="11" y="34" width="26" height="16" fill="#f6efe5" opacity=".85"/><path d="M24 37l2 4 4 .5-3 2.6 1 4-4-2-4 2 1-4-3-2.6 4-.5z" fill="#c2185b" opacity=".8"/></svg>`,
   papel: `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M2 8 Q24 14 46 8" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5 9h12v16l-3-3-3 3-3-3-3 3z" fill="#e8418c"/><path d="M18 11h12v16l-3-3-3 3-3-3-3 3z" fill="#f59b23"/><path d="M31 9h12v16l-3-3-3 3-3-3-3 3z" fill="#7b5cd6"/><circle cx="11" cy="15" r="2" fill="#2a1638"/><circle cx="24" cy="17" r="2" fill="#2a1638"/><circle cx="37" cy="15" r="2" fill="#2a1638"/></svg>`,
@@ -16,6 +19,10 @@ const ART = {
   petate: `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M3 34h42l-3 8H6z" fill="#d9b46a"/><path d="M3 34h42l-1 2H4z" fill="#ecd08f"/><g stroke="#a8803e" stroke-width="1"><path d="M8 34l-2 8M14 34l-2 8M20 34l-1 8M26 34v8M32 34l1 8M38 34l2 8M44 34l-2 8"/><path d="M5 38h38" stroke-dasharray="3 3"/></g></svg>`,
   virgen: `<svg viewBox="0 0 48 64" aria-hidden="true"><rect x="6" y="2" width="36" height="60" rx="2" fill="#5a3820"/><rect x="9" y="5" width="30" height="54" fill="#2a1a10"/><ellipse cx="24" cy="32" rx="13" ry="24" fill="#f2c45a"/><g stroke="#ffd98a" stroke-width="1"><path d="M24 6v6M24 52v6M11 32h4M33 32h4M15 13l3 4M33 13l-3 4M15 51l3-4M33 51l-3-4"/></g><path d="M24 14c-7 2-9 12-9 22 0 8 2 14 9 16 7-2 9-8 9-16 0-10-2-20-9-22z" fill="#1f7a6e"/><path d="M24 22c-3 1-4 8-4 16 0 6 1 9 4 10 3-1 4-4 4-10 0-8-1-15-4-16z" fill="#d9546e"/><circle cx="24" cy="19" r="3.2" fill="#c9a27a"/><g fill="#ffe08a"><circle cx="18" cy="30" r=".9"/><circle cx="17" cy="38" r=".9"/><circle cx="30" cy="30" r=".9"/><circle cx="31" cy="39" r=".9"/></g><path d="M18 52h12l-2 3h-8z" fill="#3a2a5a"/></svg>`,
   mariposa: `<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M23 22C17 8 4 8 5 18c1 7 9 8 18 6z" fill="#f08a1c" stroke="#1a0f0a" stroke-width="1.5"/><path d="M25 22C31 8 44 8 43 18c-1 7-9 8-18 6z" fill="#f08a1c" stroke="#1a0f0a" stroke-width="1.5"/><path d="M23 25c-8 0-14 5-11 11 3 4 9 1 11-8zM25 25c8 0 14 5 11 11-3 4-9 1-11-8z" fill="#e0701a" stroke="#1a0f0a" stroke-width="1.5"/><path d="M23 22L10 14M23 22L12 21M25 22l13-8M25 22l11-1" stroke="#1a0f0a" stroke-width="1"/><rect x="23" y="16" width="2" height="18" rx="1" fill="#1a0f0a"/><g fill="#fff"><circle cx="7" cy="16" r=".9"/><circle cx="9" cy="21" r=".9"/><circle cx="41" cy="16" r=".9"/><circle cx="39" cy="21" r=".9"/></g></svg>`,
+  coca: `<svg viewBox="0 0 48 64" aria-hidden="true"><rect x="20" y="2" width="8" height="4" rx="1" fill="#c62828"/><path d="M20 6h8v8c0 4 4 6 4 12 0 5-3 7-3 11s4 6 4 13v8a3 3 0 0 1-3 3H18a3 3 0 0 1-3-3v-8c0-7 4-9 4-13s-3-6-3-11c0-6 4-8 4-12z" fill="#3b1a0c" stroke="#c8d8d0" stroke-opacity=".5"/><rect x="15.5" y="34" width="17" height="9" fill="#c62828"/><path d="M17 38.5c4-2 10 2 14 0" stroke="#fff" stroke-width="1.2" fill="none"/><path d="M21 10v40" stroke="#fff" stroke-opacity=".25" stroke-width="1.5"/></svg>`,
+  jamaica: fresca('#9b1b30'),
+  horchata: fresca('#efe3cf', '<g fill="#a0612b"><circle cx="20" cy="30" r=".9"/><circle cx="27" cy="34" r=".9"/><circle cx="24" cy="28" r=".7"/><circle cx="29" cy="29" r=".8"/></g>'),
+  tamarindo: fresca('#8a5a2b'),
 };
 
 export const CATEGORIES = [
@@ -112,9 +119,21 @@ export const OFFERINGS = [
   o('chocolate', 'bebidas', 2, 1, '🍫', 'el chocolate', 'choh-koh-LAH-teh', 'the chocolate',
     'Le preparo chocolate caliente', 'a {name}', 'I make hot chocolate for {name}.',
     'Hot chocolate is served with pan de muerto. Chocolate comes from Mexico.'),
-  o('refresco', 'bebidas', 2, 1, '🥤', 'el refresco', 'reh-FRES-koh', 'the soda',
-    'Le sirvo un refresco', 'a {name}', 'I pour a soda for {name}.',
-    'Altars hold whatever they liked to drink. Coca-Cola is one of the most common drinks on Mexican altars.'),
+  o('refrescos', 'bebidas', 2, 1, '🥤', 'los refrescos', 'reh-FRES-kohs', 'the sodas',
+    'Le sirvo refrescos', 'a {name}', 'I pour sodas for {name}.',
+    'The altar holds whatever they liked to drink, like their favorite sodas.'),
+  o('coca', 'bebidas', 2, 2, 'coca', 'una coca', 'OO-nah KOH-kah', 'a Coke',
+    'Le dejo una coca', 'a {name}', 'I leave a Coke for {name}.',
+    'In Mexico people ask for "una coca". Coca-Cola is one of the most common drinks on Mexican altars.'),
+  o('jamaica', 'bebidas', 2, 1, 'jamaica', 'el agua de jamaica', 'AH-gwah deh hah-MY-kah', 'hibiscus water',
+    'Le preparo agua de jamaica', 'a {name}', 'I make hibiscus water for {name}.',
+    'Aguas frescas are cold drinks made with fruit, flowers or seeds. Agua de jamaica is made from dried hibiscus flowers and is deep red.'),
+  o('horchata', 'bebidas', 2, 1, 'horchata', 'el agua de horchata', 'AH-gwah deh or-CHAH-tah', 'rice and cinnamon water',
+    'Le preparo agua de horchata', 'a {name}', 'I make horchata for {name}.',
+    'Horchata is a sweet, creamy agua fresca made with rice and cinnamon.'),
+  o('tamarindo', 'bebidas', 2, 1, 'tamarindo', 'el agua de tamarindo', 'AH-gwah deh tah-mah-REEN-doh', 'tamarind water',
+    'Le preparo agua de tamarindo', 'a {name}', 'I make tamarind water for {name}.',
+    'Made from the sweet and sour tamarind pod. Families make the agua fresca their loved one liked best.'),
   o('cerveza', 'bebidas', 2, 2, '🍺', 'la cerveza', 'sehr-VEH-sah', 'the beer',
     'Le dejo una cerveza', 'a {name}', 'I leave a beer for {name}.',
     'Beer is one of the most common drinks on altars. If they enjoyed one, their favorite is left for them.'),
@@ -181,6 +200,60 @@ export const OFFERINGS = [
 export const PHOTO = { id: 'foto', emoji: '🖼️', es: 'la foto', say: 'FOH-toh', en: 'the photo',
   core: 'Pongo la foto', tail: 'de {name}', sentenceEn: 'I put out {name}\'s photo.',
   why: 'The photo shows who the altar is for. It helps the spirit recognize its home, shows that a place is saved for them, and keeps their memory alive for the next generations.' };
+
+// Why each offering belongs on the altar, in simple Mexican Spanish (shown first; English is the reference)
+const WHY_ES = {
+  vela: 'La luz de las velas les muestra a las almas el camino a casa. Las velas blancas iluminan el camino y las moradas representan el luto. En algunas comunidades se pone una vela por cada alma que esperan.',
+  cempasuchil: 'Todas las ofrendas llevan cempasúchil. Su color naranja y su olor fuerte guían a las almas a casa. Con estas flores se hace un arco, la puerta entre los vivos y los muertos, y un camino de pétalos.',
+  terciopelo: 'Una flor roja y suave como el terciopelo. Después del cempasúchil, es la flor más popular en las ofrendas. Se dice que trae consuelo después de una pérdida.',
+  papel: 'Papel de china con figuras recortadas. Nos recuerda que la vida es frágil. Las almas pasan por sus agujeros, y cuando el viento lo mueve, es que los ancestros ya llegaron.',
+  agua: 'El agua es lo primero que buscan las almas después de su largo viaje. Algunos dicen que el nivel del agua baja después de la visita.',
+  sal: 'La sal purifica. Protege al alma en su viaje para que pueda regresar el próximo año.',
+  copal: 'Una resina de árbol que se quema como incienso desde antes de la llegada de los españoles. Su humo limpia el lugar y su aroma atrae a los seres queridos.',
+  petate: 'Un tapete de palma tejida al pie de la ofrenda, donde las almas descansan después de su viaje.',
+  cruz: 'Muchas ofrendas tienen una cruz de flores, semillas, velas o arena en el nivel más bajo, una señal de la fe católica de México.',
+  virgen: 'Muchas familias ponen una imagen de la Virgen de Guadalupe o de un santo en el nivel más alto para cuidar la ofrenda.',
+  rosario: 'Las cuentas para rezar de alguien que rezaba: un recuerdo personal y religioso.',
+  mariposa: 'Las mariposas monarca llegan a México cada año cerca del Día de Muertos. Los purépechas de Michoacán creen que son las almas de los muertos que regresan.',
+  xolo: 'Según la creencia azteca, el xoloitzcuintle cuida a las personas en vida y guía a las almas a cruzar el río hacia el Mictlán, la tierra de los muertos.',
+  pan: 'Un pan dulce con cáscara de naranja y anís, con «huesos» de masa encima. Solo se hornea en esta temporada.',
+  calavera: 'Las calaveras de azúcar llevan el nombre de la persona en la frente. Las chicas son para los niños y las grandes para los adultos. La muerte se recibe con dulzura, no con miedo.',
+  mole: 'En Oaxaca, Puebla y Michoacán, el mole negro con pollo y ajonjolí es el platillo de esta celebración.',
+  tamales: 'Las familias cocinan los platillos favoritos de sus seres queridos. Las almas disfrutan el aroma; algunos dicen que después la comida ya no tiene sabor porque las almas ya la probaron.',
+  tacos: 'Cualquier comida favorita va en la ofrenda, desde un platillo de fiesta hasta unos tacos de todos los días.',
+  pizza: 'La ofrenda es personal. Si su comida favorita era la pizza, la pizza va en el altar.',
+  hamburguesa: 'Lo importante es lo que le gustaba comer, sea tradicional o no.',
+  fruta: 'La fruta de temporada, como naranjas, mandarinas, guayabas y caña, es un regalo de la cosecha.',
+  dulces: 'Los dulces son una ofrenda favorita, sobre todo para los niños que ya murieron.',
+  cafe: 'Una taza del café que tomaba cada mañana hace que se sienta en casa.',
+  chocolate: 'El chocolate caliente se sirve con pan de muerto. El chocolate viene de México.',
+  refrescos: 'En la ofrenda se pone lo que le gustaba tomar, como sus refrescos favoritos.',
+  coca: 'En México se pide «una coca». La Coca-Cola es una de las bebidas más comunes en las ofrendas mexicanas.',
+  jamaica: 'Las aguas frescas son bebidas frías hechas con fruta, flores o semillas. El agua de jamaica se hace con flor de jamaica seca y es de color rojo intenso.',
+  horchata: 'La horchata es un agua fresca dulce y cremosa hecha con arroz y canela.',
+  tamarindo: 'Se hace con la vaina del tamarindo, dulce y ácida. Las familias preparan el agua fresca que más le gustaba a su ser querido.',
+  cerveza: 'La cerveza es una de las bebidas más comunes en las ofrendas. Si le gustaba, se le deja su favorita.',
+  tequila: 'Se sirve tequila o mezcal a los adultos a quienes les gustaba, como un brindis en su memoria.',
+  vino: 'Su bebida favorita, la que fuera, le da la bienvenida.',
+  cigarros: 'La ofrenda recibe a las personas como eran. Si fumaba, se le dejan sus cigarros.',
+  guitarra: 'Las cosas de sus pasatiempos y sus canciones favoritas ayudan a recordar cómo era.',
+  radio: 'Muchas familias ponen las canciones que le gustaban mientras la ofrenda está puesta.',
+  libro: 'Los objetos personales, como un libro, un collar o una chamarra, ayudan a recordar cómo era.',
+  cartas: 'Los juegos que le gustaban, como las cartas o la lotería, traen recuerdos de las noches juntos.',
+  balon: 'Los aficionados dejan un balón o la camiseta de su equipo favorito.',
+  sombrero: 'La ropa que siempre usaba, como un sombrero, hace que la ofrenda se sienta como esa persona.',
+  chamarra: 'Las cosas personales, como su chamarra, ayudan a recordar quién era.',
+  lentes: 'Las cosas de todos los días que siempre traía consigo nos recuerdan su presencia.',
+  reloj: 'Un reloj o una joya que usaba todos los días es un recuerdo común.',
+  celular: 'Las ofrendas modernas también incluyen cosas modernas. Lo importante es lo que le gustaba.',
+  videojuego: 'Si le encantaba jugar, su videojuego va en la ofrenda.',
+  juguete: 'Se dejan juguetes para los niños que ya murieron, para que puedan jugar cuando lleguen.',
+  hueso: 'También se recuerda a las mascotas. Muchas familias ahora incluyen a sus compañeros animales.',
+  pelota: 'Su juguete favorito le dice a la mascota que está en casa.',
+  croquetas: 'Su plato de comida, igual que los platillos que se dejan para las personas.',
+  foto: 'La foto muestra para quién es la ofrenda. Ayuda al alma a reconocer su casa, muestra que tiene un lugar reservado y mantiene viva su memoria para las nuevas generaciones.',
+};
+for (const item of [...OFFERINGS, PHOTO]) item.whyEs = WHY_ES[item.id];
 
 export const OFFERING_BY_ID = Object.fromEntries([...OFFERINGS, PHOTO].map((o) => [o.id, o]));
 

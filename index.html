@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120a10">
-<meta name="description" content="Build a Day of the Dead altar for someone you love and learn the Spanish word for every offering.">
+<meta name="description" content="Pon una ofrenda de Día de Muertos para alguien que quieres y aprende español. Build a Day of the Dead altar and learn Spanish.">
 <title>Mi Ofrenda</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/src/style.css">
@@ -19,8 +19,12 @@
 </svg>
 
 <header class="topbar">
-  <button id="homeBtn" class="brand" type="button" aria-label="Mi Ofrenda, go to the start">
-    <span aria-hidden="true">🌼</span> <span lang="es">Mi Ofrenda</span>
+  <button id="homeBtn" class="brand" type="button" aria-label="Mi Ofrenda, ir al inicio">
+    <span aria-hidden="true">🌼</span> Mi Ofrenda
+  </button>
+  <button id="enToggle" class="en-toggle" type="button" aria-pressed="true">
+    <span class="en-toggle-state">Inglés: sí</span>
+    <span class="en-toggle-hint" lang="en">English help</span>
   </button>
 </header>
 
@@ -29,36 +33,39 @@
   <section id="screenHome" class="screen page">
     <div class="intro">
       <p class="eyebrow" lang="es">Día de los Muertos · 1 y 2 de noviembre</p>
-      <h1>Build an altar. <span class="es" lang="es">Aprende español.</span></h1>
-      <p>On the Day of the Dead, families in Mexico build an <b lang="es">ofrenda</b> (altar) to welcome the spirits of the people they love back home for one night.</p>
-      <p>A traditional altar has three steps: heaven at the top, earth in the middle, and the underworld at the bottom. A marigold arch marks the doorway between the living and the dead.</p>
-      <p>Choose someone to remember, then place offerings on their altar. Each one teaches you its Spanish word, how to say it, and how to use it in a sentence.</p>
-      <button id="startBtn" class="btn primary" type="button">Build an altar <span lang="es">· Crear una ofrenda</span></button>
+      <h1>Pon una ofrenda. Aprende español. <span class="en" lang="en">Build an altar. Learn Spanish.</span></h1>
+      <p>En el Día de Muertos, las familias de México ponen una <b>ofrenda</b> para recibir a sus seres queridos que ya murieron. Por una noche, sus almas regresan a casa.
+        <span class="en" lang="en">On the Day of the Dead, families in Mexico build an altar to welcome loved ones who have died. For one night, their souls come back home.</span></p>
+      <p>Una ofrenda tradicional tiene tres niveles: el cielo arriba, la tierra en medio y el inframundo abajo. Un arco de cempasúchil es la puerta entre los vivos y los muertos.
+        <span class="en" lang="en">A traditional altar has three levels: heaven at the top, earth in the middle and the underworld at the bottom. A marigold arch is the doorway between the living and the dead.</span></p>
+      <p>Elige a alguien para recordar y pon ofrendas en su altar. Cada una te enseña su nombre en español, cómo se dice y cómo usarla en una frase.
+        <span class="en" lang="en">Choose someone to remember and place offerings on their altar. Each one teaches you its Spanish name, how to say it and how to use it in a sentence.</span></p>
+      <button id="startBtn" class="btn primary" type="button">Crear una ofrenda <span class="en" lang="en">Build an altar</span></button>
     </div>
     <div id="savedWrap" class="saved" hidden>
-      <h2>Your altars <span class="es" lang="es">· Tus ofrendas</span></h2>
+      <h2>Tus ofrendas <span class="en" lang="en">Your altars</span></h2>
       <ul id="savedList" class="saved-list"></ul>
     </div>
   </section>
 
   <!-- 2. Who to remember -->
   <section id="screenChoose" class="screen page" hidden>
-    <h1>Who would you like to remember? <span class="es" lang="es">¿A quién recuerdas?</span></h1>
+    <h1>¿A quién recuerdas? <span class="en" lang="en">Who do you remember?</span></h1>
 
-    <h2 class="step">Someone in your life</h2>
-    <div id="relationGrid" class="pick-grid" role="group" aria-label="Choose a family member, friend or pet"></div>
+    <h2 class="step">Alguien de tu vida <span class="en" lang="en">Someone in your life</span></h2>
+    <div id="relationGrid" class="pick-grid" role="group" aria-label="Elige a un familiar, un amigo o una mascota"></div>
 
     <form id="personForm" class="person-form" hidden>
       <p id="pickedLabel" class="picked"></p>
-      <label for="nameInput">Their name <span class="es" lang="es">· Su nombre</span></label>
-      <input id="nameInput" type="text" maxlength="40" autocomplete="off" placeholder="For example: Rosa">
-      <label for="memoryInput">A memory of them (optional) <span class="es" lang="es">· Un recuerdo</span></label>
-      <textarea id="memoryInput" rows="2" maxlength="200" placeholder="For example: She sang while she cooked."></textarea>
-      <button class="btn primary" type="submit">Go to the altar <span lang="es">· Ir a la ofrenda</span></button>
+      <label for="nameInput">Su nombre <span class="en" lang="en">Their name</span></label>
+      <input id="nameInput" type="text" maxlength="40" autocomplete="off" placeholder="Por ejemplo: Rosa">
+      <label for="memoryInput">Un recuerdo (opcional) <span class="en" lang="en">A memory of them (optional)</span></label>
+      <textarea id="memoryInput" rows="2" maxlength="200" placeholder="Por ejemplo: Cantaba mientras cocinaba."></textarea>
+      <button class="btn primary" type="submit">Ir a la ofrenda <span class="en" lang="en">Go to the altar</span></button>
     </form>
 
-    <h2 class="step">Or someone many people remember</h2>
-    <div id="famousGrid" class="pick-grid" role="group" aria-label="Choose a well-known person"></div>
+    <h2 class="step">O alguien que muchos recuerdan <span class="en" lang="en">Or someone many people remember</span></h2>
+    <div id="famousGrid" class="pick-grid" role="group" aria-label="Elige a una persona famosa"></div>
   </section>
 
   <!-- 3. The altar, in a dark living room -->
@@ -137,29 +144,29 @@
       <div class="vignette" aria-hidden="true"></div>
 
       <div class="stage-title">
-        <h1><span lang="es">La ofrenda para</span> <span id="altarName"></span></h1>
+        <h1><span class="for">La ofrenda para</span> <span id="altarName"></span></h1>
         <p id="altarMemory" class="memory" hidden></p>
       </div>
-      <p id="darkHint" class="dark-hint">It's dark in here. Light a candle, <b lang="es">la vela</b>, to see the altar.</p>
+      <p id="darkHint" class="dark-hint">Está oscuro. Enciende una <b>vela</b> para ver la ofrenda. <span class="en" lang="en">It's dark. Light a candle to see the altar.</span></p>
 
       <div id="caption" class="caption" aria-live="polite" hidden>
         <span id="captionIcon" class="caption-icon" aria-hidden="true"></span>
         <span class="caption-text">
-          <span id="captionWord" class="caption-word" lang="es"></span>
+          <span id="captionWord" class="caption-word"></span>
           <span id="captionSub" class="caption-sub"></span>
         </span>
-        <button id="captionSpeak" class="icon-btn" type="button" aria-label="Listen">🔊</button>
-        <button id="captionMore" class="btn small primary" type="button">Learn more</button>
+        <button id="captionSpeak" class="icon-btn" type="button" aria-label="Escuchar">🔊</button>
+        <button id="captionMore" class="btn small primary" type="button">Aprende más <span class="en" lang="en">Learn more</span></button>
       </div>
     </div>
 
     <div class="dock">
-      <p class="hint"><b>Drag</b> an offering onto the altar, or <b>tap</b> it. Tap anything on the altar to learn more.</p>
-      <div id="tabs" class="tabs" role="tablist" aria-label="Kinds of offerings"></div>
+      <p class="hint"><b>Arrastra</b> una ofrenda al altar o <b>tócala</b>. Toca cualquier cosa del altar para aprender más. <span class="en" lang="en">Drag an offering onto the altar, or tap it. Tap anything on the altar to learn more.</span></p>
+      <div id="tabs" class="tabs" role="tablist" aria-label="Tipos de ofrendas"></div>
       <div id="tray" class="tray" role="tabpanel"></div>
       <div class="dock-foot">
         <p id="count" class="count"></p>
-        <button id="practiceBtn" class="btn small" type="button">Practice my words <span lang="es">· Practicar</span></button>
+        <button id="practiceBtn" class="btn small" type="button">Practicar <span class="en" lang="en">Practice my words</span></button>
       </div>
     </div>
   </section>
@@ -168,32 +175,33 @@
 <!-- Word card: the word, how to say it, and a sentence using it -->
 <dialog id="card" class="card" aria-labelledby="cardWord">
   <div class="card-icon" id="cardIcon" aria-hidden="true"></div>
-  <h2 id="cardWord" lang="es"></h2>
-  <p class="say"><span id="cardSay"></span> · <span id="cardEn"></span></p>
-  <button id="speakBtn" class="btn" type="button">🔊 Listen <span lang="es">· Escuchar</span></button>
+  <h2 id="cardWord"></h2>
+  <p class="say"><span id="cardSay"></span> <span id="cardEn" class="en" lang="en"></span></p>
+  <button id="speakBtn" class="btn" type="button">🔊 Escuchar <span class="en" lang="en">Listen</span></button>
   <div class="sentence">
-    <p class="sentence-label">Use it in a sentence <span lang="es">· En una frase</span></p>
-    <p id="cardSentence" lang="es"></p>
-    <p id="cardSentenceEn" class="muted"></p>
-    <button id="speakSentenceBtn" class="btn small" type="button">🔊 Hear the sentence</button>
+    <p class="sentence-label">En una frase <span class="en" lang="en">Use it in a sentence</span></p>
+    <p id="cardSentence"></p>
+    <p id="cardSentenceEn" class="en" lang="en"></p>
+    <button id="speakSentenceBtn" class="btn small" type="button">🔊 Escuchar la frase <span class="en" lang="en">Hear the sentence</span></button>
   </div>
   <p id="cardWhy" class="why"></p>
+  <p id="cardWhyEn" class="why en" lang="en"></p>
   <div class="card-actions">
-    <button id="removeBtn" class="btn" type="button">Remove from altar</button>
-    <button id="closeCard" class="btn primary" type="button">Done <span lang="es">· Listo</span></button>
+    <button id="removeBtn" class="btn" type="button">Quitar del altar <span class="en" lang="en">Remove from altar</span></button>
+    <button id="closeCard" class="btn primary" type="button">Listo <span class="en" lang="en">Done</span></button>
   </div>
 </dialog>
 
 <!-- Practice quiz -->
 <dialog id="quiz" class="card" aria-labelledby="quizTitle">
-  <h2 id="quizTitle">How do you say it? <span class="es" lang="es">¿Cómo se dice?</span></h2>
+  <h2 id="quizTitle">¿Cómo se dice? <span class="en" lang="en">How do you say it?</span></h2>
   <div id="quizIcon" class="card-icon" aria-hidden="true"></div>
-  <p id="quizEn" class="quiz-en"></p>
+  <p id="quizEn" class="quiz-en en" lang="en"></p>
   <div id="quizChoices" class="quiz-choices"></div>
   <p id="quizFeedback" class="feedback" aria-live="assertive"></p>
   <div class="card-actions">
-    <button id="quizNext" class="btn" type="button" hidden>Next <span lang="es">· Siguiente</span></button>
-    <button id="quizClose" class="btn primary" type="button">Finish <span lang="es">· Terminar</span></button>
+    <button id="quizNext" class="btn" type="button" hidden>Siguiente <span class="en" lang="en">Next</span></button>
+    <button id="quizClose" class="btn primary" type="button">Terminar <span class="en" lang="en">Finish</span></button>
   </div>
 </dialog>
 

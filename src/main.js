@@ -25,6 +25,9 @@ const SLOTS = {
 const PHOTO_X = [160, 240]; // keep the photo on the top step uncovered
 const WAX = ['#c2185b', '#e65100', '#6a1b9a', '#f9a825', '#ad1457', '#2e7d32', '#1565c0'];
 
+// Offerings renamed since the first version, so altars saved then still open
+const RENAMED = { refresco: 'refrescos' };
+
 let altars = loadAltars();
 let current = null;     // the altar being decorated
 let activeTab = 'esenciales';
@@ -58,7 +61,8 @@ function cleanAltar(a) {
   const text = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
   const items = [];
   for (const raw of Array.isArray(a.items) ? a.items : []) {
-    const id = typeof raw === 'string' ? raw : raw?.id;
+    const rawId = typeof raw === 'string' ? raw : raw?.id;
+    const id = RENAMED[rawId] || rawId;
     const o = OFFERINGS.find((x) => x.id === id);
     if (!o || items.filter((i) => i.id === id).length >= o.max) continue;
     const placed = raw && typeof raw === 'object' && Number.isFinite(raw.x) && Number.isFinite(raw.y);
@@ -81,7 +85,8 @@ function saveAltars() {
   try {
     localStorage.setItem(STORE_KEY, JSON.stringify(altars));
   } catch {
-    say('Your altar could not be saved on this device (private browsing may block saving). It will stay open until you close the page.');
+    say('No se pudo guardar tu ofrenda en este dispositivo (la navegación privada puede impedirlo). Seguirá abierta hasta que cierres la página.',
+      'Your altar could not be saved on this device (private browsing may block saving). It will stay open until you close the page.');
   }
 }
 
@@ -120,7 +125,7 @@ function renderSaved() {
     icon.setAttribute('aria-hidden', 'true');
     icon.textContent = personIcon(a);
     const label = document.createElement('span');
-    label.textContent = `${a.name} · ${a.items.length} ${a.items.length === 1 ? 'offering' : 'offerings'}`;
+    label.textContent = `${a.name} · ${a.items.length} ${a.items.length === 1 ? 'ofrenda' : 'ofrendas'}`;
     open.append(icon, label);
     open.addEventListener('click', () => openAltar(a));
 
@@ -128,13 +133,13 @@ function renderSaved() {
     del.type = 'button';
     del.className = 'saved-delete';
     del.textContent = '✕';
-    del.setAttribute('aria-label', `Delete the altar for ${a.name}`);
+    del.setAttribute('aria-label', `Borrar la ofrenda para ${a.name}`);
     del.addEventListener('click', () => {
-      if (!confirm(`Delete the altar for ${a.name}? This can't be undone.`)) return;
+      if (!confirm(`¿Borrar la ofrenda para ${a.name}? No se puede deshacer.\n\nDelete the altar for ${a.name}? This can't be undone.`)) return;
       altars = altars.filter((x) => x.id !== a.id);
       saveAltars();
       renderSaved();
-      say(`The altar for ${a.name} was deleted.`);
+      say(`Se borró la ofrenda para ${a.name}.`, `The altar for ${a.name} was deleted.`);
     });
     li.append(open, del);
     list.append(li);
@@ -145,7 +150,7 @@ function renderSaved() {
 
 let pickedRelation = null;
 
-function pickButton(icon, es, en, onClick) {
+function pickButton(icon, es, enText, onClick, detail = '') {
   const b = document.createElement('button');
   b.type = 'button';
   b.className = 'pick';
@@ -155,12 +160,15 @@ function pickButton(icon, es, en, onClick) {
   i.textContent = icon;
   const s = document.createElement('span');
   s.className = 'pick-es';
-  s.lang = 'es';
   s.textContent = es;
-  const e = document.createElement('span');
-  e.className = 'pick-en';
-  e.textContent = en;
-  b.append(i, s, e);
+  b.append(i, s);
+  if (detail) {
+    const d = document.createElement('span');
+    d.className = 'pick-detail';
+    d.textContent = detail;
+    b.append(d);
+  }
+  b.append(english(enText, 'pick-en'));
   b.addEventListener('click', onClick);
   return b;
 }
@@ -170,8 +178,8 @@ function buildChooser() {
     $('relationGrid').append(pickButton(r.icon, r.es, r.en, (ev) => {
       pickedRelation = r;
       for (const b of $('relationGrid').children) b.setAttribute('aria-pressed', String(b === ev.currentTarget));
-      $('pickedLabel').textContent = `Remembering ${r.es} (${r.en}).`;
-      $('nameInput').placeholder = r.kind === 'pet' ? 'For example: Canela' : 'For example: Rosa';
+      $('pickedLabel').replaceChildren(`Vas a recordar a ${r.es}.`, english(`You're remembering ${r.en}.`));
+      $('nameInput').placeholder = r.kind === 'pet' ? 'Por ejemplo: Canela' : 'Por ejemplo: Rosa';
       $('personForm').hidden = false;
       $('nameInput').focus();
     }));
@@ -179,9 +187,9 @@ function buildChooser() {
   for (const b of $('relationGrid').children) b.setAttribute('aria-pressed', 'false');
 
   for (const f of FAMOUS) {
-    $('famousGrid').append(pickButton(f.icon, f.name, `${f.es} · ${f.en}`, () => {
+    $('famousGrid').append(pickButton(f.icon, f.name, f.en, () => {
       startAltar({ name: f.name, famous: f.id });
-    }));
+    }, f.es));
   }
 
   $('personForm').addEventListener('submit', (ev) => {
@@ -229,7 +237,7 @@ function openAltar(a) {
   $('altarMemory').textContent = a.memory ? `“${a.memory}”` : '';
   $('photoIcon').textContent = personIcon(a);
   $('photoName').textContent = a.name;
-  $('photoBtn').setAttribute('aria-label', `Photo of ${a.name}${personSubtitle(a) ? `, ${personSubtitle(a)}` : ''}. Tap to learn the word.`);
+  $('photoBtn').setAttribute('aria-label', `Foto de ${a.name}${personSubtitle(a) ? `, ${personSubtitle(a)}` : ''}. Toca para aprender la palabra.`);
   $('caption').hidden = true;
   renderTabs();
   show('screenAltar');
@@ -341,7 +349,7 @@ function renderAltar() {
     const o = OFFERING_BY_ID[it.id];
     const b = document.createElement('button');
     b.type = 'button';
-    b.setAttribute('aria-label', `${o.es}, ${o.en}`);
+    b.setAttribute('aria-label', `${o.es} (${o.en})`);
     if (o.tier === 0) {
       // the banner hangs above the altar; this invisible button lets it be tapped
       b.className = 'banner-btn';
@@ -381,8 +389,8 @@ function renderAltar() {
   const n = current.items.length;
   const words = new Set(current.items.map((i) => i.id)).size;
   $('count').textContent = n
-    ? `${n} ${n === 1 ? 'offering' : 'offerings'} · ${words} ${words === 1 ? 'palabra' : 'palabras'}`
-    : 'No offerings yet.';
+    ? `${n} ${n === 1 ? 'ofrenda' : 'ofrendas'} · ${words} ${words === 1 ? 'palabra' : 'palabras'}`
+    : 'Todavía no hay ofrendas.';
   renderTray();
   updateLights();
 }
@@ -449,13 +457,7 @@ function renderTabs() {
     b.className = 'tab';
     b.setAttribute('aria-selected', String(c.id === activeTab));
     b.tabIndex = c.id === activeTab ? 0 : -1;
-    const es = document.createElement('span');
-    es.lang = 'es';
-    es.textContent = c.es;
-    const en = document.createElement('span');
-    en.className = 'tab-en';
-    en.textContent = c.en;
-    b.append(es, en);
+    b.append(c.es, english(c.en, 'tab-en'));
     b.addEventListener('click', () => selectTab(c.id));
     tabs.append(b);
   }
@@ -482,18 +484,14 @@ function renderTray() {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'offering';
-    b.setAttribute('aria-label', `${o.es}, ${o.en}${n ? `, ${n} on the altar` : ''}`);
+    b.setAttribute('aria-label', `${o.es} (${o.en})${n ? `, ${n} en el altar` : ''}`);
     const icon = document.createElement('span');
     icon.className = 'offering-icon';
     setIcon(icon, o);
     const es = document.createElement('span');
     es.className = 'offering-es';
-    es.lang = 'es';
     es.textContent = o.es;
-    const en = document.createElement('span');
-    en.className = 'offering-en';
-    en.textContent = o.en;
-    b.append(icon, es, en);
+    b.append(icon, es, english(o.en, 'offering-en'));
     if (n) {
       const badge = document.createElement('span');
       badge.className = 'badge';
@@ -513,7 +511,8 @@ function renderTray() {
 
 function addOffering(o, spot, fromY) {
   if (countOf(o.id) >= o.max) {
-    say(o.max === 1 ? `${o.es} is already on the altar.` : `The altar already has ${o.max} of ${o.es}.`);
+    if (o.max === 1) say(`Ya hay ${o.es} en el altar.`, `${o.es} is already on the altar.`);
+    else say(`Ya hay ${o.max} en el altar: ${o.es}.`, `The altar already has ${o.max} of ${o.es}.`);
     return;
   }
   const item = { uid: newId('i'), id: o.id, ...spot };
@@ -629,7 +628,7 @@ function showCaption(o, uid) {
   icon.replaceChildren();
   setIcon(icon, o);
   $('captionWord').textContent = o.es;
-  $('captionSub').textContent = `${o.say} · ${o.en}`;
+  $('captionSub').replaceChildren(o.say, ' ', english(o.en));
   $('caption').hidden = false;
   clearTimeout(captionTimer);
   captionTimer = setTimeout(() => { $('caption').hidden = true; }, 8000);
@@ -654,7 +653,8 @@ function openCard(o, uid = null) {
   $('cardEn').textContent = o.en;
   $('cardSentence').textContent = fullSentence(o);
   $('cardSentenceEn').textContent = fill(o.sentenceEn);
-  $('cardWhy').textContent = o.why;
+  $('cardWhy').textContent = o.whyEs;
+  $('cardWhyEn').textContent = o.why;
   $('removeBtn').hidden = !uid;
   $('card').showModal();
   speakWord(o);
@@ -666,7 +666,8 @@ function removeItem(uid) {
   current.items = current.items.filter((i) => i.uid !== uid);
   saveCurrent();
   renderAltar();
-  say(`${OFFERING_BY_ID[item.id].es} was taken off the altar.`);
+  const es = OFFERING_BY_ID[item.id].es;
+  say(`Quitaste ${es} del altar.`, `${es} was taken off the altar.`);
 }
 
 // ---------- speaking Spanish ----------
@@ -688,14 +689,18 @@ function findVoice() {
 
 function deviceSpeak(text) {
   if (!('speechSynthesis' in window)) {
-    if (!warnedNoVoice) say('This browser can\'t read words aloud. Use the pronunciation guide under each word, or try Safari or Chrome.');
+    if (!warnedNoVoice) {
+      say('Este navegador no puede leer en voz alta. Usa la guía de pronunciación debajo de cada palabra, o prueba Safari o Chrome.',
+        'This browser can\'t read words aloud. Use the pronunciation guide under each word, or try Safari or Chrome.');
+    }
     warnedNoVoice = true;
     return;
   }
   if (!spanishVoice) findVoice();
   if (!spanishVoice && speechSynthesis.getVoices().length && !warnedNoVoice) {
     warnedNoVoice = true;
-    say('Your device has no Spanish voice installed, so words may sound English. On iPhone: Settings → Accessibility → Spoken Content → Voices → Spanish.');
+    say('Tu dispositivo no tiene una voz en español, así que las palabras pueden sonar en inglés. En iPhone: Configuración → Accesibilidad → Contenido leído → Voces → Español.',
+      'Your device has no Spanish voice installed, so words may sound English. On iPhone: Settings → Accessibility → Spoken Content → Voices → Spanish.');
   }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = spanishVoice?.lang || 'es-MX';
@@ -750,7 +755,8 @@ function shuffle(list) {
 function startQuiz() {
   const pool = [...new Set(current.items.map((i) => i.id))].map((id) => OFFERING_BY_ID[id]);
   if (pool.length < 3) {
-    say(`Place at least 3 different offerings first, then practice their names. (${pool.length} so far.)`);
+    say(`Primero pon al menos 3 ofrendas diferentes y luego practica sus nombres. (Llevas ${pool.length}.)`,
+      `Place at least 3 different offerings first, then practice their names. (${pool.length} so far.)`);
     return;
   }
   Object.assign(quiz, { pool, current: null, right: 0, asked: 0 });
@@ -776,7 +782,6 @@ function nextQuestion() {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'btn choice';
-    b.lang = 'es';
     b.textContent = o.es;
     b.addEventListener('click', () => answer(b, o));
     choices.append(b);
@@ -793,9 +798,9 @@ function answer(button, picked) {
     if (b.textContent === q.es) b.classList.add('right');
   }
   if (!ok) button.classList.add('wrong');
-  $('quizFeedback').textContent = ok
-    ? `¡Muy bien! ${quiz.right} of ${quiz.asked} right.`
-    : `Not quite. It's “${q.es}” (${q.say}). ${quiz.right} of ${quiz.asked} right.`;
+  const score = `${quiz.right} de ${quiz.asked}`;
+  if (ok) $('quizFeedback').replaceChildren(`¡Muy bien! ${score} correctas.`, english(`Very good! ${quiz.right} of ${quiz.asked} right.`));
+  else $('quizFeedback').replaceChildren(`Casi. Es «${q.es}» (${q.say}). ${score} correctas.`, english(`Not quite. It's "${q.es}". ${quiz.right} of ${quiz.asked} right.`));
   speakWord(q);
   $('quizNext').hidden = false;
   $('quizNext').focus();
@@ -805,12 +810,34 @@ function answer(button, picked) {
 
 let statusTimer;
 
-function say(message) {
+function say(es, enText) {
   const el = $('status');
-  el.textContent = message;
+  el.replaceChildren(es, english(enText));
   el.classList.add('visible');
   clearTimeout(statusTimer);
   statusTimer = setTimeout(() => el.classList.remove('visible'), 7000);
+}
+
+// English is the reference language: a small line under the Spanish, hidden by the "Inglés" switch
+function english(text, extraClass = '') {
+  const span = document.createElement('span');
+  span.className = `en ${extraClass}`.trim();
+  span.lang = 'en';
+  span.textContent = text;
+  return span;
+}
+
+const EN_KEY = 'mi_ofrenda_english';
+
+function setEnglish(on) {
+  document.body.classList.toggle('no-en', !on);
+  $('enToggle').setAttribute('aria-pressed', String(on));
+  $('enToggle').querySelector('.en-toggle-state').textContent = on ? 'Inglés: sí' : 'Inglés: no';
+  try {
+    localStorage.setItem(EN_KEY, on ? '1' : '0');
+  } catch {
+    // the choice just won't be remembered next time
+  }
 }
 
 function capitalize(s) {
@@ -825,6 +852,17 @@ findVoice();
 if ('speechSynthesis' in window) speechSynthesis.addEventListener?.('voiceschanged', findVoice);
 new ResizeObserver(updateLights).observe($('stage'));
 
+let englishOn = true;
+try {
+  englishOn = localStorage.getItem(EN_KEY) !== '0';
+} catch {
+  // storage blocked: keep English on
+}
+setEnglish(englishOn);
+$('enToggle').addEventListener('click', () => {
+  englishOn = !englishOn;
+  setEnglish(englishOn);
+});
 $('homeBtn').addEventListener('click', goHome);
 $('startBtn').addEventListener('click', () => {
   resetChooser();

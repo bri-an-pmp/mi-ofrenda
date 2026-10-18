@@ -1,6 +1,8 @@
 # Mi Ofrenda
 
-Build a Día de los Muertos altar for someone you love and learn the Spanish word for every offering.
+**▶ Try it: [bri-an-pmp.github.io/mi-ofrenda](https://bri-an-pmp.github.io/mi-ofrenda/)**
+
+Build a Día de los Muertos altar for someone you love and learn Spanish. Everything is in Spanish first, with English underneath as a reference (it can be switched off with the "Inglés" button).
 
 1. Choose who to remember: a family member, a friend, a pet, or a well-known person.
 2. Drag offerings onto the altar (or tap them). They fall onto the step below where you let go; drag one out of the room to take it off. Candles light up the dark room.

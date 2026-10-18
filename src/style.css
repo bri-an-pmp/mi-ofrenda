@@ -345,7 +345,7 @@ input::placeholder, textarea::placeholder { color: #a99abb; }
   pointer-events: none;
 }
 .stage-title h1 { font-size: clamp(20px, 2.4vw + 10px, 30px); margin: 0; }
-.stage-title h1 span:first-child { color: var(--marigold); font-style: italic; }
+
 .memory { color: #e6dbe9; font-style: italic; margin: 0; font-size: 15px; }
 
 .dark-hint {
@@ -565,3 +565,49 @@ input::placeholder, textarea::placeholder { color: #a99abb; }
 @media (min-width: 1000px) {
   .caption { left: auto; right: 16px; bottom: auto; top: 12px; transform: none; width: 420px; }
 }
+
+/* ---------- Spanish first, English as the reference ---------- */
+
+.en {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82em;
+  font-weight: 400;
+  font-style: normal;
+  font-family: var(--font);
+  line-height: 1.35;
+}
+h1 .en, h2 .en { margin-top: 2px; }
+p .en { margin-top: 4px; }
+.btn .en { color: inherit; opacity: 0.8; font-size: 13px; }
+.btn.primary .en { opacity: 0.85; }
+.caption .en, .status .en { color: #5a4632; }
+.caption-sub .en { display: inline; font-size: 1em; }
+.caption-sub .en::before { content: "· "; }
+.say .en { display: inline; font-size: 1em; }
+.say .en::before { content: "· "; }
+.picked .en { color: var(--muted); font-weight: 400; }
+.pick-detail { font-size: 14px; color: var(--marigold); }
+.offering-en, .pick-en, .tab-en { font-size: 13px; }
+.tab[aria-selected="true"] .en { color: #3d2410; }
+.why.en { margin-top: 0; }
+.dark-hint .en { color: #d9cbe0; }
+.stage-title .for { color: var(--marigold); font-style: italic; }
+body.no-en .en { display: none !important; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.en-toggle {
+  min-height: 44px;
+  padding: 4px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: transparent;
+  line-height: 1.15;
+}
+.en-toggle-state { font-weight: 700; font-size: 15px; }
+.en-toggle-hint { font-size: 13px; color: var(--muted); }
+.en-toggle[aria-pressed="true"] { border-color: var(--marigold); }
