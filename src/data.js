@@ -324,7 +324,9 @@ export const RELATIONS = [
   { id: 'otro', es: 'alguien especial', en: 'someone special', icon: '💛', kind: 'person' },
 ];
 
-// Well-known people often honored on public altars in Mexico
+// Well-known people often honored on public altars in Mexico. People still living are left out of
+// the iPhone app (App Store rules on using a living person's name and photo); the website keeps them.
+const IN_APP = import.meta.env?.MODE === 'app';
 export const FAMOUS = [
   { id: 'frida', name: 'Frida Kahlo', es: 'la pintora', en: 'the painter', icon: '🎨', photo: 'people/frida.jpg' },
   { id: 'diego', name: 'Diego Rivera', es: 'el muralista', en: 'the muralist', icon: '🖌️', photo: 'people/diego.jpg' },
@@ -337,8 +339,8 @@ export const FAMOUS = [
   { id: 'juanga', name: 'Juan Gabriel', es: 'el cantautor', en: 'the singer-songwriter', icon: '🎶', photo: 'people/juanga.jpg' },
   { id: 'selena', name: 'Selena', es: 'la reina de la música tejana', en: 'the queen of Tejano music', icon: '🌹', photo: 'people/selena.jpg' },
   { id: 'celia', name: 'Celia Cruz', es: 'la reina de la salsa', en: 'the queen of salsa', icon: '💃', photo: 'people/celia.jpg' },
-  { id: 'dolly', name: 'Dolly Parton', es: 'la reina del country', en: 'the queen of country music', icon: '🎸', photo: 'people/dolly.jpg' },
-];
+  { id: 'dolly', name: 'Dolly Parton', es: 'la reina del country', en: 'the queen of country music', icon: '🎸', photo: 'people/dolly.jpg', living: true },
+].filter((f) => !(IN_APP && f.living));
 // No longer offered, but altars saved earlier still open with the right icon.
 const FAMOUS_RETIRED = [
   { id: 'sorjuana', name: 'Sor Juana Inés de la Cruz', es: 'la poeta', en: 'the poet', icon: '🪶' },

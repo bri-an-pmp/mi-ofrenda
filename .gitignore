@@ -2,3 +2,6 @@ node_modules/
 dist/
 .DS_Store
 .env
+
+# Icon source images (the finished icons are in ios/App/App/Assets.xcassets)
+icon-inbox/

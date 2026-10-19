@@ -4,6 +4,7 @@ import {
   RELATION_BY_ID, FAMOUS_BY_ID, iconHTML, WAX,
 } from './data.js';
 import { renderAltar as drawAltarImage, fileName } from './snapshot.js';
+import { isApp, keepCopy, tap, sharePicture } from './native.js';
 
 const $ = (id) => document.getElementById(id);
 const STORE_KEY = 'mi_ofrenda_altars';
@@ -125,6 +126,7 @@ function isPhoto(v) {
 function saveAltars() {
   try {
     localStorage.setItem(STORE_KEY, JSON.stringify(altars));
+    keepCopy();
   } catch {
     say('No se pudo guardar tu ofrenda en este dispositivo (la navegación privada puede impedirlo). Seguirá abierta hasta que cierres la página.',
       'Your altar could not be saved on this device (private browsing may block saving). It will stay open until you close the page.');
@@ -820,6 +822,7 @@ function addOffering(o, spot, fromY) {
   saveCurrent();
   renderAltar();
   if (fromY !== undefined) fall(item, fromY);
+  tap();
   showCaption(o, item.uid);
   announce(`${o.es} (${o.en}): en el altar.`);
   speakWord(o);
@@ -1097,7 +1100,8 @@ function loadBuffer(url) {
   if (!buffers.has(url)) {
     buffers.set(url, fetch(url)
       .then((r) => {
-        if (!r.ok) throw new Error(`${r.status}`);
+        // Files inside the iPhone app answer with status 0 instead of 200
+        if (!r.ok && r.status !== 0) throw new Error(`${r.status}`);
         return r.arrayBuffer();
       })
       .then((data) => new Promise((resolve, reject) => audioCtx.decodeAudioData(data, resolve, reject)))
@@ -1176,7 +1180,7 @@ function speakSentence(o) {
 // ---------- save and share as a picture ----------
 
 const shot = { blob: null, url: '', name: '', type: '', token: 0 };
-const canShareFiles = (() => {
+const canShareFiles = isApp || (() => {
   try {
     return Boolean(navigator.canShare?.({ files: [new File(['x'], 'x.png', { type: 'image/png' })] }));
   } catch {
@@ -1226,6 +1230,7 @@ async function prepareShot() {
 function openShare() {
   $('shareBtn').hidden = !canShareFiles;
   $('emailBtn').hidden = canShareFiles;
+  $('downloadBtn').hidden = isApp; // the app has no downloads folder; "Save Image" in the share sheet saves it
   $('shareTip').replaceChildren(...(canShareFiles
     ? ['En el menú de compartir elige Instagram, WhatsApp, Facebook, TikTok, Mensajes o Correo. En iPhone, «Guardar imagen» la guarda en Fotos.',
       english('In the share menu, pick Instagram, WhatsApp, Facebook, TikTok, Messages or Mail. On iPhone, "Save Image" puts it in Photos.')]
@@ -1246,15 +1251,21 @@ function downloadShot() {
 }
 
 async function shareShot() {
-  const file = new File([shot.blob], shot.name, { type: shot.type });
+  const title = `Mi ofrenda para ${allNames(current)}`;
+  const text = `Hice una ofrenda para ${allNames(current)} y aprendí español. #DíaDeMuertos`;
   try {
-    await navigator.share({
-      files: [file],
-      title: `Mi ofrenda para ${allNames(current)}`,
-      text: `Hice una ofrenda para ${allNames(current)} y aprendí español. #DíaDeMuertos`,
-    });
+    if (isApp) {
+      await sharePicture(shot.blob, shot.name, title, text);
+      return;
+    }
+    await navigator.share({ files: [new File([shot.blob], shot.name, { type: shot.type })], title, text });
   } catch (err) {
     if (err?.name === 'AbortError') return; // the person closed the share menu
+    if (isApp) {
+      say('No se pudo abrir el menú de compartir. Toma una captura de pantalla del altar y compártela desde Fotos.',
+        'The share menu couldn\'t open. Take a screenshot of the altar and share it from Photos.');
+      return;
+    }
     say('No se pudo abrir el menú de compartir. Usa «Descargar» y comparte la imagen desde tus fotos.',
       'The share menu couldn\'t open. Use "Download" and share the picture from your photos.');
   }
@@ -1364,6 +1375,7 @@ function setEnglish(on) {
   $('enToggle').querySelector('.en-toggle-state').textContent = on ? 'Inglés: sí' : 'Inglés: no';
   try {
     localStorage.setItem(EN_KEY, on ? '1' : '0');
+    keepCopy();
   } catch {
     // the choice just won't be remembered next time
   }

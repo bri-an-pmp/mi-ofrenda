@@ -7,9 +7,19 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "voice": "node --env-file-if-exists=.env scripts/make-voice.mjs"
+    "voice": "node --env-file-if-exists=.env scripts/make-voice.mjs",
+    "build:app": "vite build --mode app",
+    "ios": "vite build --mode app && cap sync ios"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "vite": "^6.4.4"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/share": "^8.0.3"
   }
 }

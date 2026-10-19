@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { rmSync, globSync } from 'node:fs';
 
 // Content Security Policy for the built site: the page may only run its own code and styles, and
 // may only talk to itself. If anything ever slipped untrusted code into the page, the
@@ -29,9 +30,22 @@ const securityHeaders = {
   },
 };
 
+// The iPhone app (`vite build --mode app`) leaves out people still living (see FAMOUS in data.js),
+// so their photos and recorded names aren't shipped either.
+const LIVING = ['dolly'];
+const appOnly = {
+  name: 'app-files',
+  apply: (_, env) => env.command === 'build' && env.mode === 'app',
+  closeBundle() {
+    for (const id of LIVING) {
+      for (const f of [`dist/people/${id}.jpg`, ...globSync(`dist/audio/tails/*-${id}.mp3`)]) rmSync(f, { force: true });
+    }
+  },
+};
+
 // Relative paths so the same build works on GitHub Pages (a subfolder) and inside the iOS app
 export default defineConfig({
   base: './',
-  plugins: [securityHeaders],
+  plugins: [securityHeaders, appOnly],
   build: { outDir: 'dist', emptyOutDir: true },
 });
