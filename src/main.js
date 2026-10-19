@@ -1014,10 +1014,15 @@ function deviceSpeak(text) {
   speechSynthesis.speak(u);
 }
 
+function stopSpeaking() {
+  clip?.pause();
+  stopJoined();
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
 // onEnd runs after a recorded clip finishes (not after the device voice)
 function play(url, fallbackText, onEnd) {
-  clip?.pause();
-  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  stopSpeaking();
   if (missingClips.has(url)) {
     deviceSpeak(fallbackText);
     return;
@@ -1042,14 +1047,100 @@ function speakWord(o) {
   play(`audio/words/${o.id}.mp3`, o.es);
 }
 
+// Sentences are joined with Web Audio so the name follows without a pause: both clips are
+// loaded before anything plays, and the quiet edges of each recording are skipped.
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const NAME_GAP = 0.08; // seconds of breath between the sentence and the name
+let audioCtx = null;
+let joined = { token: 0, sources: [], timer: 0 };
+const buffers = new Map();
+
+function stopJoined() {
+  joined.token++;
+  for (const s of joined.sources) {
+    try { s.stop(); } catch { /* already stopped */ }
+  }
+  joined.sources = [];
+  clearTimeout(joined.timer);
+}
+
+function loadBuffer(url) {
+  if (!buffers.has(url)) {
+    buffers.set(url, fetch(url)
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.arrayBuffer();
+      })
+      .then((data) => new Promise((resolve, reject) => audioCtx.decodeAudioData(data, resolve, reject)))
+      .catch((err) => {
+        buffers.delete(url);
+        throw err;
+      }));
+  }
+  return buffers.get(url);
+}
+
+// Where the voice starts and ends in a clip, in seconds, leaving out the silence around it
+function voiced(buf) {
+  const d = buf.getChannelData(0);
+  let a = 0;
+  let b = d.length - 1;
+  while (a < b && Math.abs(d[a]) < 0.02) a++;
+  while (b > a && Math.abs(d[b]) < 0.02) b--;
+  return [Math.max(0, a / buf.sampleRate - 0.02), Math.min(buf.duration, b / buf.sampleRate + 0.05)];
+}
+
+function startAt(buf, when, from, to) {
+  const s = audioCtx.createBufferSource();
+  s.buffer = buf;
+  s.connect(audioCtx.destination);
+  s.start(when, from, Math.max(0.01, to - from));
+  joined.sources.push(s);
+}
+
 // The recording says the sentence without a name ("Pongo la foto."), since names are typed by
-// the user; the device voice then finishes it with the name ("de Rosa").
+// the user. Famous people have their ending recorded too ("a Juan Gabriel"); typed names are
+// finished by the device voice ("de Rosa").
 function speakSentence(o) {
-  play(`audio/sentences/${o.id}.mp3`, fullSentence(o), () => {
-    // Famous people have their ending recorded too ("a Juan Gabriel"); typed names use the device voice.
-    const m = /^(a|para|por|de) \{name\}$/.exec(o.tail);
-    if (current.famous && m) play(`audio/tails/${m[1]}-${current.famous}.mp3`, fill(o.tail));
-    else deviceSpeak(fill(o.tail));
+  const m = /^(a|para|por|de) \{name\}$/.exec(o.tail);
+  const tailUrl = current.famous && m ? `audio/tails/${m[1]}-${current.famous}.mp3` : null;
+  const coreUrl = `audio/sentences/${o.id}.mp3`;
+  if (!AudioCtx || missingClips.has(coreUrl)) {
+    play(coreUrl, fullSentence(o), () => {
+      if (tailUrl) play(tailUrl, fill(o.tail));
+      else deviceSpeak(fill(o.tail));
+    });
+    return;
+  }
+  stopSpeaking();
+  const token = joined.token;
+  // Created and resumed inside the tap, as iPhones require
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (navigator.audioSession) navigator.audioSession.type = 'playback'; // plays even with the ring switch on silent
+  audioCtx.resume?.();
+  const tail = tailUrl && !missingClips.has(tailUrl) ? loadBuffer(tailUrl).catch(() => {
+    missingClips.add(tailUrl);
+    return null;
+  }) : Promise.resolve(null);
+  Promise.all([loadBuffer(coreUrl), tail]).then(([coreBuf, tailBuf]) => {
+    if (token !== joined.token) return;
+    const [c0, c1] = voiced(coreBuf);
+    const start = audioCtx.currentTime + 0.05;
+    startAt(coreBuf, start, c0, c1);
+    const nameAt = start + (c1 - c0) + NAME_GAP;
+    if (tailBuf) {
+      const [t0, t1] = voiced(tailBuf);
+      startAt(tailBuf, nameAt, t0, t1);
+    } else {
+      // The device voice takes a moment to start talking, so it is asked a little early
+      joined.timer = setTimeout(() => {
+        if (token === joined.token) deviceSpeak(fill(o.tail));
+      }, Math.max(0, (nameAt - audioCtx.currentTime - 0.15) * 1000));
+    }
+  }, () => {
+    if (token !== joined.token) return;
+    missingClips.add(coreUrl);
+    deviceSpeak(fullSentence(o));
   });
 }
 
