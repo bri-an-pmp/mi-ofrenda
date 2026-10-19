@@ -984,12 +984,37 @@ let warnedNoVoice = false;
 let clip = null;
 const missingClips = new Set();
 
+// The recordings are a woman's voice, so the device voice must be a natural woman's voice too.
+// Novelty and robotic voices (Apple's Eddy, Rocko, Zarvox…) and men's voices are never used.
+const NOVELTY_VOICES = /\b(albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|junior|ralph|fred|kathy)\b/i;
+const MALE_VOICES = /\b(jorge|juan|diego|carlos|ra[uú]l|pablo|[aá]lvaro|gonzalo|jaime|enrique|miguel|andr[eé]s|alonso|antonio|gerardo|jos[eé]|luis|mart[ií]n|tom[aá]s|sergio|lorenzo|federico|emilio|male|hombre)\b/i;
+const FEMALE_VOICES = /\b(paulina|m[oó]nica|marisol|ang[eé]lica|soledad|isabela|francisca|esperanza|sabina|dalia|helena|laura|elvira|paloma|lupe|pen[eé]lope|ximena|elena|luc[ií]a|camila|valentina|catalina|beatriz|mia|female|mujer)\b/i;
+const LANG_RANK = ['es-mx', 'es-us', 'es-419'];
+
+function voiceScore(v) {
+  const lang = (v.lang || '').toLowerCase().replace('_', '-');
+  if (!lang.startsWith('es') || NOVELTY_VOICES.test(v.name) || MALE_VOICES.test(v.name)) return -1;
+  // Google's Spanish voices are women's voices; an unnamed system voice is allowed but ranked low
+  const female = FEMALE_VOICES.test(v.name) || /google/i.test(v.name);
+  const personName = /^[A-ZÁÉÍÓÚ][a-záéíóúñ]+\b/.test(v.name) && !/^(spanish|español|espa|google|microsoft|apple)/i.test(v.name);
+  if (!female && personName) return -1; // a person's name we don't know: could be a man
+  let score = female ? 100 : 10;
+  const rank = LANG_RANK.indexOf(lang);
+  score += rank === -1 ? 0 : 30 - rank * 10;
+  if (/enhanced|premium|mejorada|natural|neural/i.test(v.name)) score += 20;
+  if (v.localService) score += 5;
+  return score;
+}
+
 function findVoice() {
   if (!('speechSynthesis' in window)) return;
-  const voices = speechSynthesis.getVoices();
-  spanishVoice = voices.find((v) => v.lang === 'es-MX')
-    || voices.find((v) => v.lang === 'es-US')
-    || voices.find((v) => v.lang?.toLowerCase().startsWith('es')) || null;
+  let best = null;
+  let bestScore = -1;
+  for (const v of speechSynthesis.getVoices()) {
+    const s = voiceScore(v);
+    if (s > bestScore) { best = v; bestScore = s; }
+  }
+  spanishVoice = best;
 }
 
 function deviceSpeak(text) {
@@ -1002,15 +1027,19 @@ function deviceSpeak(text) {
     return;
   }
   if (!spanishVoice) findVoice();
-  if (!spanishVoice && speechSynthesis.getVoices().length && !warnedNoVoice) {
-    warnedNoVoice = true;
-    say('Tu dispositivo no tiene una voz en español, así que las palabras pueden sonar en inglés. En iPhone: Configuración → Accesibilidad → Contenido leído → Voces → Español.',
-      'Your device has no Spanish voice installed, so words may sound English. On iPhone: Settings → Accessibility → Spoken Content → Voices → Spanish.');
+  if (!spanishVoice) {
+    // Better no name than a robotic or mismatched voice; the name is still on screen
+    if (!warnedNoVoice) {
+      warnedNoVoice = true;
+      say('Tu dispositivo no tiene una voz de mujer en español, así que el nombre no se lee en voz alta. En iPhone puedes descargar «Paulina»: Configuración → Accesibilidad → Contenido leído → Voces → Español.',
+        'Your device has no Spanish woman\'s voice, so the name isn\'t read aloud. On iPhone you can download "Paulina": Settings → Accessibility → Spoken Content → Voices → Spanish.');
+    }
+    return;
   }
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = spanishVoice?.lang || 'es-MX';
-  if (spanishVoice) u.voice = spanishVoice;
-  u.rate = 0.85;
+  u.lang = spanishVoice.lang;
+  u.voice = spanishVoice;
+  u.rate = 0.9;
   speechSynthesis.speak(u);
 }
 
