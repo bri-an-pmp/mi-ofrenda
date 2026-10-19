@@ -91,6 +91,7 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
   const looks = await Promise.all(items.map((it) => {
     const o = OFFERING_BY_ID[it.id];
     const wax = o.id === 'vela' ? WAX[candle++ % WAX.length] : '';
+    if (it.photo) return loadImage(it.photo).then((img) => ({ photo: img })).catch(() => null);
     return o.art ? artImage(o, wax, defs) : null;
   }));
   const [room, altarImg, photo, ...guestPhotos] = await Promise.all([
@@ -194,7 +195,20 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
     ctx.shadowColor = 'rgba(0,0,0,.7)';
     ctx.shadowBlur = 6 * k;
     ctx.shadowOffsetY = 4 * k;
-    if (looks[i]) {
+    if (looks[i]?.photo) {
+      // a photo of a pet's favorite thing, as a little white-bordered print
+      const img = looks[i].photo;
+      const bw = box * 0.95;
+      const bh = box * 0.8;
+      const scale = Math.max(bw / img.width, bh / img.height);
+      const sw = bw / scale;
+      const sh = bh / scale;
+      const x0 = cx - bw / 2;
+      const y0 = bottom - bh;
+      ctx.fillStyle = '#f3ebdf';
+      ctx.fillRect(x0 - 4 * k, y0 - 4 * k, bw + 8 * k, bh + 8 * k);
+      ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, x0, y0, bw, bh);
+    } else if (looks[i]) {
       const { img, vw, vh } = looks[i];
       const bw = o.id === 'vela' ? aw * 0.09 : box;
       const bh = o.id === 'vela' ? aw * 0.12 : box;

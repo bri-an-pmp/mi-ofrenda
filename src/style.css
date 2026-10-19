@@ -733,3 +733,6 @@ body.no-en .caption-sub .en.word-en, body.no-en .say .en.word-en { display: inli
 
 .photo { cursor: grab; }
 .photo.dragging { cursor: grabbing; z-index: 400; transform: scale(1.05); box-shadow: 0 3cqw 5cqw rgba(0, 0, 0, 0.7), inset 0 0 0 0.5cqw #c9a45c; }
+
+.on-altar.fav { place-items: end center; }
+.on-altar.fav img { width: 92%; height: 80%; object-fit: cover; border: 0.7cqw solid #f3ebdf; border-radius: 3px; box-shadow: 0 1cqw 1.6cqw rgba(0,0,0,.5); transform: rotate(-4deg); }

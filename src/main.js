@@ -32,6 +32,7 @@ const RENAMED = { refresco: 'refrescos' };
 // (never inherited ones like "__proto__"), IDs must look like ours, and sizes are capped.
 const own = (map, key) => (typeof key === 'string' && Object.hasOwn(map, key) ? map[key] : undefined);
 const ID_FORMAT = /^[a-z0-9]{1,32}$/i;
+const MAX_GUESTS = 4; // extra loved ones per altar (must be defined before saved altars load)
 const MAX_ALTARS = 100;
 const MAX_PHOTO_BYTES = 25 * 1024 * 1024;
 const MAX_PHOTO_PIXELS = 40e6;
@@ -78,7 +79,9 @@ function cleanAltar(a) {
     const spot = placed ? { x: clamp(raw.x, 0, 400), y: clamp(raw.y, 0, 520) } : autoSpot(o, items);
     const uid = raw && typeof raw.uid === 'string' && ID_FORMAT.test(raw.uid) && !items.some((i) => i.uid === raw.uid)
       ? raw.uid : newId('i');
-    items.push({ uid, id, ...spot });
+    const photo = id === 'favorito' && isPhoto(raw?.photo) ? { photo: raw.photo } : {};
+    if (id === 'favorito' && !photo.photo) continue; // a favorite thing is its photo
+    items.push({ uid, id, ...spot, ...photo });
   }
   return {
     id: a.id,
@@ -104,7 +107,6 @@ const mainSpot = () => ({ ...MAIN_SPOT, ...(current?.framePos || {}) });
 const guestSpot = (g, i) => ({ ...GUEST_SPOTS[i], ...(g.pos || {}) });
 
 // More loved ones on the same altar, each with a frame of their own
-const MAX_GUESTS = 4;
 function cleanGuest(g) {
   if (!g || typeof g !== 'object') return null;
   const text = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
@@ -643,7 +645,15 @@ function renderAltar() {
       b.classList.add('candle');
       b.style.setProperty('--wax', WAX[candle++ % WAX.length]);
     }
-    setIcon(b, o);
+    if (it.photo) {
+      b.classList.add('fav');
+      const img = document.createElement('img');
+      img.src = it.photo;
+      img.alt = '';
+      b.append(img);
+    } else {
+      setIcon(b, o);
+    }
     if (o.id === 'copal') {
       const smoke = document.createElement('span');
       smoke.className = 'smoke';
@@ -791,7 +801,15 @@ function renderTray() {
   if (focusedId) tray.querySelector(`[data-id="${focusedId}"]`)?.focus();
 }
 
+// "Their favorite thing" asks for a photo first, then goes on the altar
+let pendingFavorite = null;
 function addOffering(o, spot, fromY) {
+  if (o.id === 'favorito' && !spot.photo && countOf(o.id) < o.max) {
+    pendingFavorite = { o, spot, fromY };
+    $('favFile').value = '';
+    $('favFile').click();
+    return;
+  }
   if (countOf(o.id) >= o.max) {
     if (o.max === 1) say(`Ya hay ${o.es} en el altar.`, `${o.es} is already on the altar.`);
     else say(`Ya hay ${o.max} en el altar: ${o.es}.`, `The altar already has ${o.max} of ${o.es}.`);
@@ -1261,6 +1279,13 @@ $('enToggle').addEventListener('click', () => {
   setEnglish(englishOn);
 });
 $('homeBtn').addEventListener('click', goHome);
+$('favFile').addEventListener('change', async (ev) => {
+  const p = pendingFavorite;
+  pendingFavorite = null;
+  if (!p) return;
+  const photo = await photoFromInput(ev.target);
+  if (photo) addOffering(p.o, { ...p.spot, photo }, p.fromY);
+});
 
 // ---------- another loved one on the same altar ----------
 let guestPhoto = '';
