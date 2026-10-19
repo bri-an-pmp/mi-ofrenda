@@ -34,7 +34,8 @@
 
 <main>
   <!-- 1. Welcome -->
-  <section id="screenHome" class="screen page">
+  <section id="screenHome" class="screen page home">
+    <div class="home-main">
     <div class="intro">
       <p class="eyebrow" lang="es">Día de los Muertos · 27 de octubre, 1 y 2 de noviembre</p>
       <h1>Pon una ofrenda. Aprende español. <span class="en" lang="en">Build an altar. Learn Spanish.</span></h1>
@@ -45,11 +46,74 @@
       <p>Elige a alguien para recordar y pon ofrendas en su altar. Cada una te enseña su nombre en español, cómo se dice y cómo usarla en una frase.
         <span class="en" lang="en">Choose someone to remember and place offerings on their altar. Each one teaches you its Spanish name, how to say it and how to use it in a sentence.</span></p>
       <button id="startBtn" class="btn primary" type="button">Crear una ofrenda <span class="en" lang="en">Build an altar</span></button>
-    </div>
-    <div id="savedWrap" class="saved" hidden>
+      </div>
+      <div id="savedWrap" class="saved" hidden>
       <h2>Tus ofrendas <span class="en" lang="en">Your altars</span></h2>
       <ul id="savedList" class="saved-list"></ul>
+      </div>
     </div>
+    <aside class="faq" aria-labelledby="faqTitle">
+      <h2 id="faqTitle">Preguntas frecuentes <span class="en" lang="en">Frequently asked questions</span></h2>
+      <details class="faq-item">
+        <summary>¿Qué es el Día de Muertos? <span class="en" lang="en">What is the Day of the Dead?</span></summary>
+        <div class="faq-answer">
+          <p>Es una tradición mexicana para recordar a los seres queridos que murieron. Las familias creen que, por unos días, sus almas regresan a casa, y las reciben con una ofrenda, comida, música y visitas al panteón. <span class="en" lang="en">A Mexican tradition for remembering loved ones who have died. Families believe their souls come home for a few days, and welcome them with an altar, food, music and visits to the cemetery.</span></p>
+          <figure class="faq-photo"><img src="faq/puebla.jpg" alt="Una ofrenda grande con flores, papel picado y comida en Puebla" loading="lazy" decoding="async"><figcaption>Ofrenda en Puebla. <span class="en" lang="en">An ofrenda in Puebla.</span></figcaption></figure>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Es el «Halloween mexicano»? <span class="en" lang="en">Is it "Mexican Halloween"?</span></summary>
+        <div class="faq-answer">
+          <p>No. Caen en fechas cercanas, pero el Día de Muertos no trata del miedo: es una celebración alegre y llena de cariño para honrar y recordar a la familia. <span class="en" lang="en">No. The dates are close, but the Day of the Dead isn't about fear: it's a joyful, loving celebration to honor and remember family.</span></p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿De dónde viene? <span class="en" lang="en">Where does it come from?</span></summary>
+        <div class="faq-answer">
+          <p>Mezcla rituales de los pueblos indígenas de México, como los mexicas, que honraban a sus muertos y al Mictlán (el lugar de los muertos), con las fiestas católicas de Todos los Santos y los Fieles Difuntos. En 2008 la UNESCO la inscribió como Patrimonio Cultural Inmaterial de la Humanidad. <span class="en" lang="en">It blends rituals of Mexico's Indigenous peoples, such as the Mexica (Aztecs), who honored their dead and Mictlán (the land of the dead), with the Catholic feasts of All Saints' and All Souls' Day. In 2008 UNESCO inscribed it as Intangible Cultural Heritage of Humanity.</span></p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Qué días se celebra? <span class="en" lang="en">Which days is it celebrated?</span></summary>
+        <div class="faq-answer">
+          <p>Depende de la región y de la familia. Una forma común: el 27 de octubre se recuerda a las mascotas, el 28 a quienes murieron en accidentes, el 31 de octubre y el 1 de noviembre a los niños («angelitos») y el 2 de noviembre a los adultos. <span class="en" lang="en">It depends on the region and the family. A common pattern: October 27 for pets, October 28 for those who died in accidents, October 31 and November 1 for children ("little angels") and November 2 for adults.</span></p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Qué lleva una ofrenda? <span class="en" lang="en">What goes on an ofrenda?</span></summary>
+        <div class="faq-answer">
+          <p>Una foto de la persona, velas para guiar su camino, flores de cempasúchil, un vaso de agua para la sed del viaje, sal, pan, calaveritas de azúcar, papel picado, copal y la comida y bebida que más le gustaban. <span class="en" lang="en">A photo of the person, candles to guide their way, marigolds, a glass of water for the thirst of the journey, salt, bread, sugar skulls, cut-paper banners, copal incense and the food and drink they loved most.</span></p>
+          <figure class="faq-photo"><img src="faq/casa.jpg" alt="Una ofrenda familiar en casa con fotos, flores y velas" loading="lazy" decoding="async"><figcaption>Ofrenda familiar en casa. <span class="en" lang="en">A family ofrenda at home.</span></figcaption></figure>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Por qué se usa el cempasúchil? <span class="en" lang="en">Why marigolds?</span></summary>
+        <div class="faq-answer">
+          <p>Su color naranja y su aroma fuerte ayudan a las almas a encontrar el camino a casa. Su nombre viene del náhuatl <i>cempōhualxōchitl</i>, «veinte flores». Muchas familias hacen un caminito de pétalos hasta la ofrenda. <span class="en" lang="en">Their orange color and strong scent help souls find the way home. The name comes from the Nahuatl <i>cempōhualxōchitl</i>, "twenty flowers." Many families lay a path of petals up to the altar.</span></p>
+          <figure class="faq-photo"><img src="faq/patzcuaro.jpg" alt="Un altar con grandes arcos de cempasúchil en Pátzcuaro" loading="lazy" decoding="async"><figcaption>Arcos de cempasúchil en Pátzcuaro, Michoacán. <span class="en" lang="en">Marigold arches in Pátzcuaro, Michoacán.</span></figcaption></figure>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Quién es La Catrina? <span class="en" lang="en">Who is La Catrina?</span></summary>
+        <div class="faq-answer">
+          <p>Es una calavera elegante creada por el grabador José Guadalupe Posada hacia 1910 para burlarse de quienes fingían ser ricos. Diego Rivera la vistió y la llamó «Catrina» en su mural <i>Sueño de una tarde dominical en la Alameda Central</i> (1947). Hoy recuerda que la muerte nos iguala a todos. <span class="en" lang="en">An elegant skeleton created by the engraver José Guadalupe Posada around 1910 to poke fun at people pretending to be rich. Diego Rivera dressed her and named her "Catrina" in his mural <i>Dream of a Sunday Afternoon in the Alameda Central</i> (1947). Today she's a reminder that death makes us all equal.</span></p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Cuándo se pone y se quita la ofrenda? <span class="en" lang="en">When do you set up and take down the ofrenda?</span></summary>
+        <div class="faq-answer">
+          <p>Muchas familias la ponen a finales de octubre y la quitan después del 2 de noviembre. Al final, la comida de la ofrenda se comparte con la familia y los vecinos. <span class="en" lang="en">Many families set it up in late October and take it down after November 2. Afterward, the food from the altar is shared with family and neighbors.</span></p>
+          <figure class="faq-photo"><img src="faq/queretaro.jpg" alt="Una ofrenda con papel picado de colores, calaveritas y cempasúchil" loading="lazy" decoding="async"><figcaption>Ofrenda en Tequisquiapan, Querétaro. <span class="en" lang="en">An ofrenda in Tequisquiapan, Querétaro.</span></figcaption></figure>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>¿Puedo poner una ofrenda si no soy mexicano? <span class="en" lang="en">Can I build an ofrenda if I'm not Mexican?</span></summary>
+        <div class="faq-answer">
+          <p>Sí. La ofrenda es una forma de recordar con cariño, y muchas personas en todo el mundo la ponen. Lo importante es hacerlo con respeto y aprender el significado de cada cosa. <span class="en" lang="en">Yes. The ofrenda is a loving way to remember, and people all over the world build one. What matters is doing it with respect and learning what each item means.</span></p>
+        </div>
+      </details>
+      <p class="field-note faq-credits">Fotos de Wikimedia Commons (<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-SA 4.0</a>): AlexgarcesM, SerchForVideos, NopalTropical, A01376766. <span class="en" lang="en">Photos from Wikimedia Commons (CC BY-SA 4.0) by AlexgarcesM, SerchForVideos, NopalTropical and A01376766.</span></p>
+    </aside>
   </section>
 
   <!-- 2. Who to remember -->
@@ -118,15 +182,15 @@
         <rect x="30" y="82" width="270" height="10" rx="5" fill="#2a170d"/>
         <!-- framed landscape painting: agave field, mountains and a sunset -->
         <rect x="640" y="200" width="160" height="116" fill="#5a3218"/>
-        <rect x="647" y="207" width="146" height="102" fill="#e8c35a"/>
+        <rect x="647" y="207" width="146" height="102" fill="#c9a96a"/>
         <svg x="652" y="212" width="136" height="92" viewBox="0 0 136 92" preserveAspectRatio="none">
-          <defs><linearGradient id="dusk" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f28c4b"/><stop offset=".55" stop-color="#f7c46a"/><stop offset="1" stop-color="#f9dc93"/></linearGradient></defs>
+          <defs><linearGradient id="dusk" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#b98a6c"/><stop offset=".55" stop-color="#c9a77c"/><stop offset="1" stop-color="#d3bf98"/></linearGradient></defs>
           <rect width="136" height="92" fill="url(#dusk)"/>
-          <circle cx="98" cy="40" r="11" fill="#fff1c4"/>
-          <path d="M0 52 L22 30 L40 46 L62 22 L86 48 L104 36 L136 54 V92 H0z" fill="#8a5a8c"/>
-          <path d="M0 60 L30 44 L58 58 L90 46 L136 62 V92 H0z" fill="#5e7a52"/>
-          <rect y="66" width="136" height="26" fill="#9a7b3c"/>
-          <g fill="#3f7a6a">
+          <circle cx="98" cy="40" r="11" fill="#e6d8b8"/>
+          <path d="M0 52 L22 30 L40 46 L62 22 L86 48 L104 36 L136 54 V92 H0z" fill="#76627a"/>
+          <path d="M0 60 L30 44 L58 58 L90 46 L136 62 V92 H0z" fill="#5f6b55"/>
+          <rect y="66" width="136" height="26" fill="#857250"/>
+          <g fill="#4f665c">
             <path d="M14 82 l-6 -12 l7 8 l1 -14 l3 14 l6 -10 l-4 14z"/><path d="M44 86 l-7 -14 l8 9 l1 -16 l4 16 l7 -11 l-5 16z"/>
             <path d="M76 84 l-6 -12 l7 8 l1 -14 l3 14 l6 -10 l-4 14z"/><path d="M108 87 l-7 -14 l8 9 l1 -16 l4 16 l7 -11 l-5 16z"/>
             <path d="M28 74 l-4 -8 l5 5 l1 -9 l2 9 l4 -6 l-3 9z" opacity=".8"/><path d="M92 74 l-4 -8 l5 5 l1 -9 l2 9 l4 -6 l-3 9z" opacity=".8"/>
@@ -242,7 +306,7 @@
 <dialog id="card" class="card" aria-labelledby="cardWord">
   <div class="card-icon" id="cardIcon" aria-hidden="true"></div>
   <h2 id="cardWord"></h2>
-  <p class="say"><span id="cardSay"></span> <span id="cardEn" class="en" lang="en"></span></p>
+  <p class="say"><span id="cardSay"></span> <span id="cardEn" class="en word-en" lang="en"></span></p>
   <button id="speakBtn" class="btn" type="button">🔊 Escuchar <span class="en" lang="en">Listen</span></button>
   <div class="sentence">
     <p class="sentence-label">En una frase <span class="en" lang="en">Use it in a sentence</span></p>

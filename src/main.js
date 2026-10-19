@@ -616,7 +616,7 @@ function renderTray() {
     const es = document.createElement('span');
     es.className = 'offering-es';
     es.textContent = o.es;
-    b.append(icon, es, english(o.en, 'offering-en'));
+    b.append(icon, es, english(o.en, 'offering-en word-en'));
     if (n) {
       const badge = document.createElement('span');
       badge.className = 'badge';
@@ -754,7 +754,7 @@ function showCaption(o, uid) {
   icon.replaceChildren();
   setIcon(icon, o);
   $('captionWord').textContent = o.es;
-  $('captionSub').replaceChildren(o.say, ' ', english(o.en));
+  $('captionSub').replaceChildren(o.say, ' ', english(o.en, 'word-en'));
   $('caption').hidden = false;
 }
 
