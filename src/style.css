@@ -730,3 +730,6 @@ body.no-en .caption-sub .en.word-en, body.no-en .say .en.word-en { display: inli
 .guest-dialog select, .guest-dialog input[type="text"] { width: 100%; min-height: 44px; font-size: 16px; padding: 8px 10px; border-radius: 10px; border: 2px solid var(--line); background: #1a0f22; color: inherit; }
 .guest-dialog .photo-pick { margin-top: 12px; }
 .guest-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+
+.photo { cursor: grab; }
+.photo.dragging { cursor: grabbing; z-index: 400; transform: scale(1.05); box-shadow: 0 3cqw 5cqw rgba(0, 0, 0, 0.7), inset 0 0 0 0.5cqw #c9a45c; }

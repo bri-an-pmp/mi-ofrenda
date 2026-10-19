@@ -67,7 +67,7 @@ function wrap(ctx, text, maxWidth, maxLines) {
  * @param {string} o.altarSvg  markup of the altar drawing (steps, arch, banner, petals)
  * @param {string} o.defs      shared gradient definitions for the candle drawing
  */
-export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, defs, guests = [] }) {
+export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, defs, guests = [], mainSpot = { x: 0.4125, y: 0.152, w: 0.175, h: 0.173 } }) {
   const size = SIZES[sizeKey];
   const W = size.w;
   const H = size.h;
@@ -180,7 +180,7 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
     }
     ctx.fillText(name, ix + iw / 2, iy + ih + pad * 0.4 + labelH / 2);
   };
-  drawFrame(ax + aw * 0.4125, ay + ah * 0.152, aw * 0.175, ah * 0.173, photo, icon, altar.name);
+  drawFrame(ax + aw * mainSpot.x, ay + ah * mainSpot.y, aw * mainSpot.w, ah * mainSpot.h, photo, icon, altar.name);
   guests.forEach((g, i) => drawFrame(ax + aw * g.x, ay + ah * g.y, aw * g.w, ah * g.h, guestPhotos[i], g.icon, g.name));
 
   // the offerings, back to front like on screen

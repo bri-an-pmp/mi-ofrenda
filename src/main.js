@@ -24,7 +24,6 @@ const SLOTS = {
   3: [44, 78, 112, 146, 180, 220, 254, 288, 322, 356],
   4: [30, 66, 102, 138, 262, 298, 334, 370],
 };
-const PHOTO_X = [160, 240]; // keep the photo on the top step uncovered
 
 // Offerings renamed since the first version, so altars saved then still open
 const RENAMED = { refresco: 'refrescos' };
@@ -88,11 +87,21 @@ function cleanAltar(a) {
     famous: own(FAMOUS_BY_ID, a.famous) ? a.famous : '',
     memory: text(a.memory, 200),
     photo: isPhoto(a.photo) ? a.photo : '',
+    framePos: cleanPos(a.framePos),
     guests: (Array.isArray(a.guests) ? a.guests : []).slice(0, MAX_GUESTS).map(cleanGuest).filter(Boolean),
     items,
     updated: Number.isFinite(a.updated) ? a.updated : Date.now(),
   };
 }
+
+// A frame moved by the visitor: its top-left corner as fractions of the altar box
+function cleanPos(p) {
+  if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) return null;
+  return { x: clamp(p.x, 0, 0.87), y: clamp(p.y, 0, 0.88) };
+}
+const MAIN_SPOT = { x: 0.4125, y: 0.152, w: 0.175, h: 0.173 };
+const mainSpot = () => ({ ...MAIN_SPOT, ...(current?.framePos || {}) });
+const guestSpot = (g, i) => ({ ...GUEST_SPOTS[i], ...(g.pos || {}) });
 
 // More loved ones on the same altar, each with a frame of their own
 const MAX_GUESTS = 4;
@@ -103,7 +112,7 @@ function cleanGuest(g) {
   const famous = own(FAMOUS_BY_ID, g.famous) ? g.famous : '';
   const name = text(g.name, 40).trim();
   if (!name) return null;
-  return { id: typeof g.id === 'string' && ID_FORMAT.test(g.id) ? g.id : newId('g'), name, relation, famous, photo: isPhoto(g.photo) ? g.photo : '' };
+  return { id: typeof g.id === 'string' && ID_FORMAT.test(g.id) ? g.id : newId('g'), name, relation, famous, photo: isPhoto(g.photo) ? g.photo : '', pos: cleanPos(g.pos) };
 }
 
 // Photos are stored as small JPEG pictures made on this device (see readPhoto)
@@ -347,6 +356,7 @@ function openAltar(a) {
   $('altarMemory').hidden = !a.memory;
   $('altarMemory').textContent = a.memory ? `“${a.memory}”` : '';
   renderFrame();
+  placeMainFrame();
   renderGuests();
   $('photoName').textContent = a.name;
   $('photoBtn').setAttribute('aria-label', `Foto de ${a.name}${personSubtitle(a) ? `, ${personSubtitle(a)}` : ''}. Toca para aprender la palabra o poner una foto.`);
@@ -374,7 +384,7 @@ function frameIcon(p) {
 function renderGuests() {
   $('altar').querySelectorAll('.photo.guest').forEach((el) => el.remove());
   current.guests.forEach((g, i) => {
-    const spot = GUEST_SPOTS[i];
+    const spot = guestSpot(g, i);
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'photo guest';
@@ -399,7 +409,8 @@ function renderGuests() {
     name.className = 'photo-name';
     name.textContent = g.name;
     b.append(inner, name);
-    b.setAttribute('aria-label', `Foto de ${g.name}. Toca para quitarla de la ofrenda.`);
+    b.setAttribute('aria-label', `Foto de ${g.name}. Arrástrala para moverla o tócala para quitarla de la ofrenda.`);
+    makeFrameDraggable(b, (pos) => { g.pos = pos; saveCurrent(); });
     b.addEventListener('click', () => {
       if (!window.confirm(`¿Quitar a ${g.name} de esta ofrenda? (Remove ${g.name} from this altar?)`)) return;
       current.guests = current.guests.filter((x) => x.id !== g.id);
@@ -414,6 +425,56 @@ function renderGuests() {
 function openAltarRefresh() {
   $('altarName').textContent = allNames(current);
   renderGuests();
+}
+
+// Frames can be dragged anywhere on the altar; a short tap still works as a tap.
+function makeFrameDraggable(el, onMoved) {
+  let start = null;
+  el.style.touchAction = 'none';
+  el.addEventListener('pointerdown', (ev) => {
+    if (ev.button !== 0) return;
+    const box = $('altar').getBoundingClientRect();
+    start = { x: ev.clientX, y: ev.clientY, left: el.offsetLeft, top: el.offsetTop, box, moved: false };
+    try { el.setPointerCapture(ev.pointerId); } catch { /* synthetic events in tests */ }
+  });
+  el.addEventListener('pointermove', (ev) => {
+    if (!start) return;
+    const dx = ev.clientX - start.x;
+    const dy = ev.clientY - start.y;
+    if (!start.moved && Math.hypot(dx, dy) < 6) return;
+    start.moved = true;
+    el.classList.add('dragging');
+    const x = clamp((start.left + dx) / start.box.width, 0, 1 - el.offsetWidth / start.box.width);
+    const y = clamp((start.top + dy) / start.box.height, 0, 1 - el.offsetHeight / start.box.height);
+    el.style.left = `${x * 100}%`;
+    el.style.top = `${y * 100}%`;
+    start.pos = { x, y };
+  });
+  const end = () => {
+    if (!start) return;
+    if (start.moved) {
+      el.classList.remove('dragging');
+      onMoved(cleanPos(start.pos));
+      el.dataset.justMoved = '1';
+      setTimeout(() => delete el.dataset.justMoved, 50);
+    }
+    start = null;
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+  // a drag shouldn't also count as a tap
+  el.addEventListener('click', (ev) => { if (el.dataset.justMoved) { ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
+}
+
+function placeMainFrame() {
+  const m = mainSpot();
+  const el = $('photoBtn');
+  if (current.framePos) {
+    Object.assign(el.style, { left: `${m.x * 100}%`, top: `${m.y * 100}%` });
+  } else {
+    el.style.left = '';
+    el.style.top = '';
+  }
 }
 
 function renderFrame() {
@@ -459,7 +520,7 @@ function lastUid(id) {
 // True when a spot on a step would sit in front of an extra loved one's frame
 function onGuestFrame(x, y) {
   return (current?.guests || []).some((g, i) => {
-    const f = GUEST_SPOTS[i];
+    const f = guestSpot(g, i);
     const left = f.x * 400 - 14;
     const right = (f.x + f.w) * 400 + 14;
     const bottom = (f.y + f.h) * 520;
@@ -484,7 +545,9 @@ function autoSpot(o, items) {
 function dropSpot(x, bottomY) {
   x = clamp(x, SURFACES[3].x0, SURFACES[3].x1);
   const s = SURFACES.find((f) => bottomY <= f.y + 16 && x >= f.x0 && x <= f.x1) || SURFACES[3];
-  if (s.tier === 1 && x > PHOTO_X[0] && x < PHOTO_X[1]) x = x < 200 ? PHOTO_X[0] - 8 : PHOTO_X[1] + 8;
+  const m = mainSpot();
+  const px = [m.x * 400 - 5, (m.x + m.w) * 400 + 5];
+  if (Math.abs((m.y + m.h) * 520 - s.y) < 30 && x > px[0] && x < px[1]) x = x < (px[0] + px[1]) / 2 ? px[0] - 8 : px[1] + 8;
   return { x, y: s.y };
 }
 
@@ -996,7 +1059,8 @@ async function prepareShot() {
   try {
     const canvas = await drawAltarImage({
       altar: { ...current, photo: frameLook(current), name: current.name, title: allNames(current) },
-      guests: current.guests.map((g, i) => ({ ...GUEST_SPOTS[i], name: g.name, photo: frameLook(g), icon: frameIcon(g) })),
+      guests: current.guests.map((g, i) => ({ ...guestSpot(g, i), name: g.name, photo: frameLook(g), icon: frameIcon(g) })),
+      mainSpot: mainSpot(),
       icon: personIcon(current),
       sizeKey,
       roomSvg: document.querySelector('.room').outerHTML,
@@ -1277,6 +1341,7 @@ $('startBtn').addEventListener('click', () => {
   show('screenChoose');
 });
 $('photoBtn').addEventListener('click', () => openCard(PHOTO));
+makeFrameDraggable($('photoBtn'), (pos) => { current.framePos = pos; saveCurrent(); });
 $('frameFile').addEventListener('change', async (ev) => {
   const photo = await photoFromInput(ev.target);
   if (!photo) return;
