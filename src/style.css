@@ -716,3 +716,17 @@ body.no-en .caption-sub .en.word-en, body.no-en .say .en.word-en { display: inli
 .choice-row .en { font-size: 13px; }
 .share .card-actions { margin-top: 16px; }
 .share-tip { font-size: 15px; margin: 12px 0 0; }
+
+/* ---------- more loved ones on one altar ---------- */
+.photo.guest { padding: 1cqw; gap: 0.4cqw; z-index: 150; }
+.photo.guest .photo-name { font-size: max(10px, 1.6cqw); }
+.photo.guest .photo-icon { font-size: 5.5cqw; }
+.add-guest { margin-top: 8px; pointer-events: auto; }
+.add-guest .en { display: block; }
+.guest-dialog { max-width: 420px; width: calc(100% - 32px); border: 2px solid var(--line); border-radius: 18px; background: #24132e; color: inherit; padding: 20px; }
+.guest-dialog::backdrop { background: rgba(10, 4, 12, 0.7); }
+.guest-dialog h2 { margin-top: 0; }
+.guest-dialog label { display: block; margin: 12px 0 6px; font-weight: 700; }
+.guest-dialog select, .guest-dialog input[type="text"] { width: 100%; min-height: 44px; font-size: 16px; padding: 8px 10px; border-radius: 10px; border: 2px solid var(--line); background: #1a0f22; color: inherit; }
+.guest-dialog .photo-pick { margin-top: 12px; }
+.guest-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }

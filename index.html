@@ -275,6 +275,7 @@
         <h1><span class="for">La ofrenda para</span> <span id="altarName"></span></h1>
         <p id="altarMemory" class="memory" hidden></p>
         <p id="count" class="count"></p>
+        <button id="addGuestBtn" class="btn small add-guest" type="button">＋ Agregar otro ser querido <span class="en word-en" lang="en">Add another loved one</span></button>
       </div>
       <p id="darkHint" class="dark-hint">Enciende una <b>vela</b> para iluminar la ofrenda. <span class="en" lang="en">Light a candle to light up the altar.</span></p>
 
@@ -301,6 +302,26 @@
     </div>
   </section>
 </main>
+
+<dialog id="guestDialog" class="guest-dialog" aria-labelledby="guestTitle">
+  <form id="guestForm" method="dialog">
+    <h2 id="guestTitle">¿A quién más recuerdas? <span class="en word-en" lang="en">Who else do you remember?</span></h2>
+    <label for="guestWho">Elige <span class="en word-en" lang="en">Choose</span></label>
+    <select id="guestWho"></select>
+    <div id="guestNameRow">
+      <label for="guestName">Su nombre (opcional) <span class="en word-en" lang="en">Their name (optional)</span></label>
+      <input id="guestName" type="text" maxlength="40" autocomplete="off">
+    </div>
+    <div id="guestPhotoRow" class="photo-pick">
+      <input id="guestFile" class="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif">
+      <label for="guestFile" class="btn file-btn"><span id="guestPhotoText">📷 Elegir una foto</span> <span class="en word-en" lang="en">Choose a photo (optional)</span></label>
+    </div>
+    <div class="guest-actions">
+      <button id="guestCancel" class="btn" type="button">Cancelar <span class="en word-en" lang="en">Cancel</span></button>
+      <button class="btn primary" type="submit">Agregar <span class="en word-en" lang="en">Add</span></button>
+    </div>
+  </form>
+</dialog>
 
 <!-- Word card: the word, how to say it, and a sentence using it -->
 <dialog id="card" class="card" aria-labelledby="cardWord">

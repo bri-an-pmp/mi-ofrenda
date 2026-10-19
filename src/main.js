@@ -88,9 +88,22 @@ function cleanAltar(a) {
     famous: own(FAMOUS_BY_ID, a.famous) ? a.famous : '',
     memory: text(a.memory, 200),
     photo: isPhoto(a.photo) ? a.photo : '',
+    guests: (Array.isArray(a.guests) ? a.guests : []).slice(0, MAX_GUESTS).map(cleanGuest).filter(Boolean),
     items,
     updated: Number.isFinite(a.updated) ? a.updated : Date.now(),
   };
+}
+
+// More loved ones on the same altar, each with a frame of their own
+const MAX_GUESTS = 4;
+function cleanGuest(g) {
+  if (!g || typeof g !== 'object') return null;
+  const text = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
+  const relation = own(RELATION_BY_ID, g.relation) ? g.relation : '';
+  const famous = own(FAMOUS_BY_ID, g.famous) ? g.famous : '';
+  const name = text(g.name, 40).trim();
+  if (!name) return null;
+  return { id: typeof g.id === 'string' && ID_FORMAT.test(g.id) ? g.id : newId('g'), name, relation, famous, photo: isPhoto(g.photo) ? g.photo : '' };
 }
 
 // Photos are stored as small JPEG pictures made on this device (see readPhoto)
@@ -320,19 +333,87 @@ function personSubtitle(a) {
   return r && r.id !== 'otro' ? r.es : '';
 }
 
+// "Rosa", "Rosa y Toby", "Rosa, Toby y Selena"
+function allNames(a) {
+  const names = [a.name, ...(a.guests || []).map((g) => g.name)];
+  return names.length < 2 ? names[0] : `${names.slice(0, -1).join(', ')} y ${names.at(-1)}`;
+}
+
 function openAltar(a) {
   current = a;
+  if (!Array.isArray(current.guests)) current.guests = [];
   activeTab = isPet(a) ? 'mascotas' : 'esenciales';
-  $('altarName').textContent = a.name;
+  $('altarName').textContent = allNames(a);
   $('altarMemory').hidden = !a.memory;
   $('altarMemory').textContent = a.memory ? `“${a.memory}”` : '';
   renderFrame();
+  renderGuests();
   $('photoName').textContent = a.name;
   $('photoBtn').setAttribute('aria-label', `Foto de ${a.name}${personSubtitle(a) ? `, ${personSubtitle(a)}` : ''}. Toca para aprender la palabra o poner una foto.`);
   $('caption').hidden = true;
   renderTabs();
   show('screenAltar');
   renderAltar();
+}
+
+// Where extra frames sit, as fractions of the altar box: two on the top step, two on the middle step
+const GUEST_SPOTS = [
+  { x: 0.255, y: 0.205, w: 0.135, h: 0.125 },
+  { x: 0.61, y: 0.205, w: 0.135, h: 0.125 },
+  { x: 0.15, y: 0.395, w: 0.135, h: 0.125 },
+  { x: 0.715, y: 0.395, w: 0.135, h: 0.125 },
+];
+
+function frameLook(p) {
+  return p.photo || own(FAMOUS_BY_ID, p.famous)?.photo || '';
+}
+function frameIcon(p) {
+  return own(RELATION_BY_ID, p.relation)?.icon || own(FAMOUS_BY_ID, p.famous)?.icon || '💛';
+}
+
+function renderGuests() {
+  $('altar').querySelectorAll('.photo.guest').forEach((el) => el.remove());
+  current.guests.forEach((g, i) => {
+    const spot = GUEST_SPOTS[i];
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'photo guest';
+    Object.assign(b.style, { left: `${spot.x * 100}%`, top: `${spot.y * 100}%`, width: `${spot.w * 100}%`, height: `${spot.h * 100}%` });
+    const inner = document.createElement('span');
+    inner.className = 'photo-inner';
+    const look = frameLook(g);
+    if (look) {
+      const img = document.createElement('img');
+      img.className = 'photo-img';
+      img.alt = '';
+      img.src = look;
+      inner.append(img);
+    } else {
+      const icon = document.createElement('span');
+      icon.className = 'photo-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = frameIcon(g);
+      inner.append(icon);
+    }
+    const name = document.createElement('span');
+    name.className = 'photo-name';
+    name.textContent = g.name;
+    b.append(inner, name);
+    b.setAttribute('aria-label', `Foto de ${g.name}. Toca para quitarla de la ofrenda.`);
+    b.addEventListener('click', () => {
+      if (!window.confirm(`¿Quitar a ${g.name} de esta ofrenda? (Remove ${g.name} from this altar?)`)) return;
+      current.guests = current.guests.filter((x) => x.id !== g.id);
+      saveCurrent();
+      openAltarRefresh();
+    });
+    $('altar').append(b);
+  });
+  $('addGuestBtn').hidden = current.guests.length >= MAX_GUESTS;
+}
+
+function openAltarRefresh() {
+  $('altarName').textContent = allNames(current);
+  renderGuests();
 }
 
 function renderFrame() {
@@ -375,13 +456,24 @@ function lastUid(id) {
 }
 
 // A free spot for a tapped offering: its usual step first, then the nearest other steps
+// True when a spot on a step would sit in front of an extra loved one's frame
+function onGuestFrame(x, y) {
+  return (current?.guests || []).some((g, i) => {
+    const f = GUEST_SPOTS[i];
+    const left = f.x * 400 - 14;
+    const right = (f.x + f.w) * 400 + 14;
+    const bottom = (f.y + f.h) * 520;
+    return x > left && x < right && y > bottom - 12 && y < bottom + 40;
+  });
+}
+
 function autoSpot(o, items) {
   if (o.tier === 0) return { x: 200, y: 0 };
   const tiers = [1, 2, 3, 4].sort((a, b) => Math.abs(a - o.tier) - Math.abs(b - o.tier));
   for (const tier of tiers) {
     const s = SURFACES[tier - 1];
     for (const x of SLOTS[tier]) {
-      if (!items.some((i) => Math.abs(i.y - s.y) < 2 && Math.abs(i.x - x) < 24)) return { x, y: s.y };
+      if (!items.some((i) => Math.abs(i.y - s.y) < 2 && Math.abs(i.x - x) < 24) && !onGuestFrame(x, s.y)) return { x, y: s.y };
     }
   }
   const s = SURFACES[o.tier - 1];
@@ -903,7 +995,8 @@ async function prepareShot() {
   $('shareBusy').hidden = false;
   try {
     const canvas = await drawAltarImage({
-      altar: current,
+      altar: { ...current, photo: frameLook(current), name: current.name, title: allNames(current) },
+      guests: current.guests.map((g, i) => ({ ...GUEST_SPOTS[i], name: g.name, photo: frameLook(g), icon: frameIcon(g) })),
       icon: personIcon(current),
       sizeKey,
       roomSvg: document.querySelector('.room').outerHTML,
@@ -955,8 +1048,8 @@ async function shareShot() {
   try {
     await navigator.share({
       files: [file],
-      title: `Mi ofrenda para ${current.name}`,
-      text: `Hice una ofrenda para ${current.name} y aprendí español. #DíaDeMuertos`,
+      title: `Mi ofrenda para ${allNames(current)}`,
+      text: `Hice una ofrenda para ${allNames(current)} y aprendí español. #DíaDeMuertos`,
     });
   } catch (err) {
     if (err?.name === 'AbortError') return; // the person closed the share menu
@@ -967,8 +1060,8 @@ async function shareShot() {
 
 function emailShot() {
   downloadShot();
-  const subject = `Mi ofrenda para ${current.name}`;
-  const body = `Te comparto la ofrenda que hice para ${current.name} (la imagen va adjunta).\n\nhttps://${'bri-an-pmp.github.io/mi-ofrenda/'}`;
+  const subject = `Mi ofrenda para ${allNames(current)}`;
+  const body = `Te comparto la ofrenda que hice para ${allNames(current)} (la imagen va adjunta).\n\nhttps://${'bri-an-pmp.github.io/mi-ofrenda/'}`;
   say('Se descargó la imagen. Adjúntala al correo que se abrió.', 'The picture was downloaded. Attach it to the email that opened.');
   window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
@@ -1104,6 +1197,63 @@ $('enToggle').addEventListener('click', () => {
   setEnglish(englishOn);
 });
 $('homeBtn').addEventListener('click', goHome);
+
+// ---------- another loved one on the same altar ----------
+let guestPhoto = '';
+function fillGuestSelect() {
+  const sel = $('guestWho');
+  if (sel.options.length) return;
+  const add = (label, items, valueOf, textOf) => {
+    const g = document.createElement('optgroup');
+    g.label = label;
+    for (const it of items) {
+      const opt = document.createElement('option');
+      opt.value = valueOf(it);
+      opt.textContent = textOf(it);
+      g.append(opt);
+    }
+    sel.append(g);
+  };
+  add('Alguien de tu vida · Someone in your life', RELATIONS, (r) => `r:${r.id}`, (r) => `${r.icon} ${r.es} · ${r.en}`);
+  add('Alguien que muchos recuerdan · Someone many remember', FAMOUS, (f) => `f:${f.id}`, (f) => `${f.name} · ${f.es}`);
+}
+function syncGuestName() {
+  const [kind, id] = $('guestWho').value.split(':');
+  const famous = kind === 'f';
+  $('guestNameRow').hidden = famous;
+  $('guestPhotoRow').hidden = famous;
+  if (!famous) $('guestName').placeholder = capitalize(own(RELATION_BY_ID, id)?.es || '');
+}
+$('addGuestBtn').addEventListener('click', () => {
+  fillGuestSelect();
+  $('guestName').value = '';
+  guestPhoto = '';
+  $('guestPhotoText').textContent = '📷 Elegir una foto';
+  syncGuestName();
+  $('guestDialog').showModal();
+});
+$('guestWho').addEventListener('change', syncGuestName);
+$('guestFile').addEventListener('change', async (ev) => {
+  const photo = await photoFromInput(ev.target);
+  if (!photo) return;
+  guestPhoto = photo;
+  $('guestPhotoText').textContent = '📷 Foto lista · Photo ready';
+});
+$('guestCancel').addEventListener('click', () => $('guestDialog').close());
+$('guestForm').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const [kind, id] = $('guestWho').value.split(':');
+  const g = kind === 'f'
+    ? { name: own(FAMOUS_BY_ID, id).name, famous: id }
+    : { name: $('guestName').value.trim() || capitalize(own(RELATION_BY_ID, id).es), relation: id, photo: guestPhoto };
+  const clean = cleanGuest({ ...g, id: newId('g') });
+  if (!clean || current.guests.length >= MAX_GUESTS) return;
+  current.guests.push(clean);
+  saveCurrent();
+  $('guestDialog').close();
+  openAltarRefresh();
+  say(`${clean.name} ya está en la ofrenda.`, `${clean.name} is on the altar now.`);
+});
 // Back: from the altar to choosing a person, from choosing to the welcome screen.
 function goBack() {
   if (!$('screenAltar').hidden) {

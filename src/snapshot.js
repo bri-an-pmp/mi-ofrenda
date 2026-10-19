@@ -67,7 +67,7 @@ function wrap(ctx, text, maxWidth, maxLines) {
  * @param {string} o.altarSvg  markup of the altar drawing (steps, arch, banner, petals)
  * @param {string} o.defs      shared gradient definitions for the candle drawing
  */
-export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, defs }) {
+export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, defs, guests = [] }) {
   const size = SIZES[sizeKey];
   const W = size.w;
   const H = size.h;
@@ -93,10 +93,11 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
     const wax = o.id === 'vela' ? WAX[candle++ % WAX.length] : '';
     return o.art ? artImage(o, wax, defs) : null;
   }));
-  const [room, altarImg, photo] = await Promise.all([
+  const [room, altarImg, photo, ...guestPhotos] = await Promise.all([
     svgImage(roomSvg, 1000, 700),
     svgImage(altarSvg, 400, 520),
-    altar.photo ? loadImage(altar.photo) : null,
+    altar.photo ? loadImage(altar.photo).catch(() => null) : null,
+    ...guests.map((g) => (g.photo ? loadImage(g.photo).catch(() => null) : null)),
   ]);
 
   // the room: wall above, the drawn room anchored to the bottom, then the wooden floor
@@ -122,65 +123,65 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
 
   ctx.drawImage(altarImg, ax, ay, aw, ah);
 
-  // the photo frame on the top step
-  const fx = ax + aw * 0.4125;
-  const fy = ay + ah * 0.152;
-  const fw = aw * 0.175;
-  const fh = ah * 0.173;
-  ctx.save();
-  ctx.shadowColor = 'rgba(0,0,0,.6)';
-  ctx.shadowBlur = 18 * k;
-  ctx.shadowOffsetY = 8 * k;
-  const wood = ctx.createLinearGradient(fx, fy, fx + fw, fy + fh);
-  wood.addColorStop(0, '#7a4e2a');
-  wood.addColorStop(0.6, '#3e2513');
-  wood.addColorStop(1, '#5a3820');
-  ctx.fillStyle = wood;
-  ctx.fillRect(fx, fy, fw, fh);
-  ctx.restore();
-  const pad = fw * 0.08;
-  const labelH = fh * 0.17;
-  const ix = fx + pad;
-  const iy = fy + pad;
-  const iw = fw - pad * 2;
-  const ih = fh - pad * 2 - labelH;
-  ctx.strokeStyle = '#c9a45c';
-  ctx.lineWidth = 2.5 * k;
-  ctx.strokeRect(fx + 1.5 * k, fy + 1.5 * k, fw - 3 * k, fh - 3 * k);
-  if (photo) {
-    // fill the frame, cropping the photo's edges as needed
-    const scale = Math.max(iw / photo.width, ih / photo.height);
-    const sw = iw / scale;
-    const sh = ih / scale;
-    ctx.drawImage(photo, (photo.width - sw) / 2, (photo.height - sh) / 2, sw, sh, ix, iy, iw, ih);
-  } else {
-    const bg = ctx.createRadialGradient(ix + iw / 2, iy + ih * 0.4, 0, ix + iw / 2, iy + ih * 0.4, iw);
-    bg.addColorStop(0, '#d8c3a0');
-    bg.addColorStop(1, '#8c6f4c');
-    ctx.fillStyle = bg;
+  // a photo frame (the main one on the top step, extra loved ones beside it)
+  const drawFrame = (fx, fy, fw, fh, photo, frameIconChar, name) => {
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,.6)';
+    ctx.shadowBlur = 18 * k;
+    ctx.shadowOffsetY = 8 * k;
+    const wood = ctx.createLinearGradient(fx, fy, fx + fw, fy + fh);
+    wood.addColorStop(0, '#7a4e2a');
+    wood.addColorStop(0.6, '#3e2513');
+    wood.addColorStop(1, '#5a3820');
+    ctx.fillStyle = wood;
+    ctx.fillRect(fx, fy, fw, fh);
+    ctx.restore();
+    const pad = fw * 0.08;
+    const labelH = fh * 0.17;
+    const ix = fx + pad;
+    const iy = fy + pad;
+    const iw = fw - pad * 2;
+    const ih = fh - pad * 2 - labelH;
+    ctx.strokeStyle = '#c9a45c';
+    ctx.lineWidth = 2.5 * k;
+    ctx.strokeRect(fx + 1.5 * k, fy + 1.5 * k, fw - 3 * k, fh - 3 * k);
+    if (photo) {
+      // fill the frame, cropping the photo's edges as needed
+      const scale = Math.max(iw / photo.width, ih / photo.height);
+      const sw = iw / scale;
+      const sh = ih / scale;
+      ctx.drawImage(photo, (photo.width - sw) / 2, (photo.height - sh) / 2, sw, sh, ix, iy, iw, ih);
+    } else {
+      const bg = ctx.createRadialGradient(ix + iw / 2, iy + ih * 0.4, 0, ix + iw / 2, iy + ih * 0.4, iw);
+      bg.addColorStop(0, '#d8c3a0');
+      bg.addColorStop(1, '#8c6f4c');
+      ctx.fillStyle = bg;
+      ctx.fillRect(ix, iy, iw, ih);
+      ctx.font = `${ih * 0.55}px ${EMOJI_FONT}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(frameIconChar, ix + iw / 2, iy + ih / 2);
+    }
+    const glass = ctx.createLinearGradient(ix, iy, ix + iw, iy + ih);
+    glass.addColorStop(0, 'rgba(255,255,255,.22)');
+    glass.addColorStop(0.25, 'rgba(255,255,255,0)');
+    ctx.fillStyle = glass;
     ctx.fillRect(ix, iy, iw, ih);
-    ctx.font = `${ih * 0.55}px ${EMOJI_FONT}`;
+    ctx.fillStyle = '#f3ebdf';
+    ctx.fillRect(ix, iy + ih + pad * 0.4, iw, labelH);
+    ctx.fillStyle = '#2a1638';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(icon, ix + iw / 2, iy + ih / 2);
-  }
-  const glass = ctx.createLinearGradient(ix, iy, ix + iw, iy + ih);
-  glass.addColorStop(0, 'rgba(255,255,255,.22)');
-  glass.addColorStop(0.25, 'rgba(255,255,255,0)');
-  ctx.fillStyle = glass;
-  ctx.fillRect(ix, iy, iw, ih);
-  ctx.fillStyle = '#f3ebdf';
-  ctx.fillRect(ix, iy + ih + pad * 0.4, iw, labelH);
-  ctx.fillStyle = '#2a1638';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  let nameSize = labelH * 0.72;
-  ctx.font = `700 ${nameSize}px ${SANS}`;
-  while (ctx.measureText(altar.name).width > iw * 0.94 && nameSize > 8) {
-    nameSize -= 1;
+    let nameSize = labelH * 0.72;
     ctx.font = `700 ${nameSize}px ${SANS}`;
-  }
-  ctx.fillText(altar.name, ix + iw / 2, iy + ih + pad * 0.4 + labelH / 2);
+    while (ctx.measureText(name).width > iw * 0.94 && nameSize > 8) {
+      nameSize -= 1;
+      ctx.font = `700 ${nameSize}px ${SANS}`;
+    }
+    ctx.fillText(name, ix + iw / 2, iy + ih + pad * 0.4 + labelH / 2);
+  };
+  drawFrame(ax + aw * 0.4125, ay + ah * 0.152, aw * 0.175, ah * 0.173, photo, icon, altar.name);
+  guests.forEach((g, i) => drawFrame(ax + aw * g.x, ay + ah * g.y, aw * g.w, ah * g.h, guestPhotos[i], g.icon, g.name));
 
   // the offerings, back to front like on screen
   const box = aw * 0.11;
@@ -265,17 +266,17 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
   const lead = 'La ofrenda para';
   const leadW = ctx.measureText(`${lead} `).width;
   ctx.font = `700 ${titleSize}px ${SERIF}`;
-  const sameLine = leadW + ctx.measureText(altar.name).width <= W - margin * 2;
+  const sameLine = leadW + ctx.measureText((altar.title || altar.name)).width <= W - margin * 2;
   let y = margin + titleSize;
   ctx.font = `italic 600 ${titleSize}px ${SERIF}`;
   ctx.fillStyle = '#f59b23';
   ctx.fillText(lead, margin, y);
   ctx.font = `700 ${titleSize}px ${SERIF}`;
   ctx.fillStyle = '#f6efe6';
-  if (sameLine) ctx.fillText(altar.name, margin + leadW, y);
+  if (sameLine) ctx.fillText((altar.title || altar.name), margin + leadW, y);
   else {
     y += titleSize * 1.15;
-    ctx.fillText(wrap(ctx, altar.name, W - margin * 2, 1)[0], margin, y);
+    ctx.fillText(wrap(ctx, (altar.title || altar.name), W - margin * 2, 1)[0], margin, y);
   }
   if (altar.memory) {
     const memSize = 30 * k;
