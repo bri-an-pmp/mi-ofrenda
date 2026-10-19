@@ -736,3 +736,8 @@ body.no-en .caption-sub .en.word-en, body.no-en .say .en.word-en { display: inli
 
 .on-altar.fav { place-items: end center; }
 .on-altar.fav img { width: 92%; height: 80%; object-fit: cover; border: 0.7cqw solid #f3ebdf; border-radius: 3px; box-shadow: 0 1cqw 1.6cqw rgba(0,0,0,.5); transform: rotate(-4deg); }
+
+/* Help and privacy links under the welcome screen */
+.legal-links { text-align: center; margin-top: 24px; }
+.legal-links a { display: inline-block; min-height: 44px; padding: 10px 8px; color: var(--marigold); }
+.legal-links .en { display: block; }

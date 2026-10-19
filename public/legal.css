@@ -1,0 +1,37 @@
+/* Shared look for the privacy and support pages (same colors and fonts as the game) */
+:root {
+  --bg: #1c1029;
+  --panel: #33204a;
+  --line: #4f3a69;
+  --text: #f6efe6;
+  --muted: #cdbfdc;
+  --marigold: #f59b23;
+  --font: "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at 50% -10%, #3c1f52 0%, transparent 60%), var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.55;
+}
+main { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; }
+h1 { font-size: 32px; margin: 8px 0 4px; }
+h2 { font-size: 22px; margin: 32px 0 6px; color: var(--marigold); }
+p, li { margin: 6px 0; }
+.en { display: block; color: var(--muted); font-size: 15px; margin-top: 2px; }
+h1 .en, h2 .en { font-family: var(--font); font-weight: 400; font-size: 17px; }
+a { color: var(--marigold); }
+a:focus-visible { outline: 3px solid var(--marigold); outline-offset: 2px; }
+.brand { font-family: var(--font-display); font-size: 20px; text-decoration: none; color: var(--text); display: inline-block; padding: 10px 0; min-height: 44px; }
+.updated { color: var(--muted); font-size: 15px; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 16px 0; }
+.mail { font-size: 19px; font-weight: 600; word-break: break-all; }
+footer { margin-top: 40px; color: var(--muted); font-size: 15px; }
+footer a { display: inline-block; padding: 10px 0; min-height: 44px; }

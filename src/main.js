@@ -39,8 +39,8 @@ const MAX_PHOTO_BYTES = 25 * 1024 * 1024;
 const MAX_PHOTO_PIXELS = 40e6;
 const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/heic', 'image/heif'];
 
+let current = null;     // the altar being decorated (declared before loading: autoSpot reads it)
 let altars = loadAltars();
-let current = null;     // the altar being decorated
 let activeTab = 'esenciales';
 let cardItem = null;    // offering shown in the word card
 let cardUid = null;     // which placed copy the card is about (to remove it)
