@@ -872,7 +872,12 @@ function speakWord(o) {
 // The recording says the sentence without a name ("Pongo la foto."), since names are typed by
 // the user; the device voice then finishes it with the name ("de Rosa").
 function speakSentence(o) {
-  play(`audio/sentences/${o.id}.mp3`, fullSentence(o), () => deviceSpeak(fill(o.tail)));
+  play(`audio/sentences/${o.id}.mp3`, fullSentence(o), () => {
+    // Famous people have their ending recorded too ("a Juan Gabriel"); typed names use the device voice.
+    const m = /^(a|para|por|de) \{name\}$/.exec(o.tail);
+    if (current.famous && m) play(`audio/tails/${m[1]}-${current.famous}.mp3`, fill(o.tail));
+    else deviceSpeak(fill(o.tail));
+  });
 }
 
 // ---------- save and share as a picture ----------

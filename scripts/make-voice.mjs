@@ -10,13 +10,18 @@
 //   ELEVENLABS_VOICE_ID=the voice ID from your ElevenLabs voice library
 
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { OFFERINGS, PHOTO, spokenWord, spokenSentence } from '../src/data.js';
+import { OFFERINGS, PHOTO, FAMOUS, spokenWord, spokenSentence, TAIL_WORDS } from '../src/data.js';
 
 const OUT = new URL('../public/audio/', import.meta.url);
 const clips = [...OFFERINGS, PHOTO].flatMap((o) => [
   { file: `words/${o.id}.mp3`, text: spokenWord(o) },
   { file: `sentences/${o.id}.mp3`, text: spokenSentence(o) },
 ]);
+// Endings with a famous person's name ("a Juan Gabriel."), so the whole sentence is in one voice.
+// Names typed by visitors can't be recorded ahead of time; those endings use the device voice.
+for (const f of FAMOUS) {
+  for (const w of TAIL_WORDS) clips.push({ file: `tails/${w}-${f.id}.mp3`, text: `${w} ${f.name}.` });
+}
 
 if (process.argv.includes('--list')) {
   for (const c of clips) console.log(`${c.file.padEnd(28)} ${c.text}`);

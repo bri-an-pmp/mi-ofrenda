@@ -309,6 +309,9 @@ export function spokenWord(o) {
   return `${o.es.charAt(0).toUpperCase()}${o.es.slice(1)}.`;
 }
 
+// Words that start a sentence ending: 'a {name}', 'para {name}', 'por {name}', 'de {name}'
+export const TAIL_WORDS = ['a', 'para', 'por', 'de'];
+
 export function spokenSentence(o) {
   return `${o.core}.`;
 }
