@@ -557,10 +557,11 @@ function updateLights() {
   const dark = $('dark');
   dark.style.webkitMaskImage = masks;
   dark.style.maskImage = masks;
-  dark.style.backgroundColor = `rgba(6, 3, 8, ${Math.max(0.6, 0.88 - lights.length * 0.035)})`;
+  // dim and cozy before the candles; each candle warms and brightens the room
+  dark.style.backgroundColor = `rgba(28, 12, 6, ${Math.max(0.12, 0.64 - lights.length * 0.08)})`;
 
   $('glow').style.backgroundImage = lights.length
-    ? lights.map((l) => `radial-gradient(circle ${r * 0.8}px at ${l.x}px ${l.y}px, rgba(255,172,70,.32), rgba(255,130,40,.1) 45%, rgba(0,0,0,0) 75%)`).join(',')
+    ? lights.map((l) => `radial-gradient(circle ${r * 0.8}px at ${l.x}px ${l.y}px, rgba(255,180,90,.4), rgba(255,140,60,.14) 45%, rgba(0,0,0,0) 75%)`).join(',')
     : 'none';
 }
 

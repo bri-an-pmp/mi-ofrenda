@@ -325,13 +325,13 @@ input::placeholder, textarea::placeholder { color: #a99abb; }
 .dark, .glow, .vignette { position: absolute; inset: 0; pointer-events: none; }
 .dark {
   z-index: 3;
-  background-color: rgba(6, 3, 8, 0.86);
+  background-color: rgba(28, 12, 6, 0.64);
   mask-composite: intersect;
   -webkit-mask-composite: source-in;
   transition: background-color 0.8s;
 }
 .glow { z-index: 4; mix-blend-mode: screen; animation: flicker 2.3s infinite; }
-.vignette { z-index: 5; background: radial-gradient(ellipse at 50% 55%, transparent 50%, rgba(0, 0, 0, 0.6) 100%); }
+.vignette { z-index: 5; background: radial-gradient(ellipse at 50% 55%, transparent 55%, rgba(40, 16, 6, 0.35) 100%); }
 @keyframes flicker {
   0% { opacity: 0.88; } 17% { opacity: 1; } 31% { opacity: 0.8; } 48% { opacity: 0.97; }
   66% { opacity: 0.84; } 83% { opacity: 1; } 100% { opacity: 0.88; }
@@ -613,8 +613,8 @@ body.no-en .en { display: none !important; }
 .back-es { font-weight: 700; font-size: 15px; }
 .back-btn .en { font-size: 13px; }
 .back-btn:hover, .back-btn:focus-visible { border-color: var(--gold, #f2b544); }
-/* famous people: two even rows of five on wide screens */
-@media (min-width: 900px) { #famousGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+/* famous people: two even rows of six on wide screens */
+@media (min-width: 1000px) { #famousGrid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 .pick-photo {
   width: 84px; height: 84px; border-radius: 50%; object-fit: cover; object-position: center 22%;
   border: 2px solid var(--line); background: #1a0f16; margin-bottom: 4px;

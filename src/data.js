@@ -87,9 +87,9 @@ export const OFFERINGS = [
     'In Aztec belief, the xolo dog guards people in life and guides souls across the river to the land of the dead, Mictlán.'),
 
   // food
-  o('pan', 'comida', 2, 3, 'pan', 'el pan de muerto', 'PAHN deh MWEHR-toh', 'the bread of the dead',
-    'Le dejo pan de muerto', 'a {name}', 'I leave bread of the dead for {name}.',
-    'A sweet bread made with orange peel and anise, topped with dough "bones", baked only for this season.'),
+  o('pan', 'comida', 2, 3, 'pan', 'el pan dulce', 'PAHN DOOL-seh', 'the sweet bread',
+    'Le dejo pan dulce', 'a {name}', 'I leave sweet bread for {name}.',
+    'Sweet breads like conchas from the neighborhood bakery are a favorite offering, shared with the family after the visit.'),
   o('calavera', 'comida', 1, 3, 'calavera', 'la calavera de azúcar', 'kah-lah-VEH-rah deh ah-SOO-kar', 'the sugar skull',
     'Le hago una calavera de azúcar', 'a {name}', 'I make a sugar skull for {name}.',
     'Sugar skulls carry the name of the person on the forehead. Small skulls are for children, large ones for adults. Death is met with sweetness, not fear.'),
@@ -121,7 +121,7 @@ export const OFFERINGS = [
     'A cup of the coffee they drank every morning makes them feel at home.'),
   o('chocolate', 'bebidas', 2, 1, '🍫', 'el chocolate', 'choh-koh-LAH-teh', 'the chocolate',
     'Le preparo chocolate caliente', 'a {name}', 'I make hot chocolate for {name}.',
-    'Hot chocolate is served with pan de muerto. Chocolate comes from Mexico.'),
+    'Hot chocolate is served with pan dulce. Chocolate comes from Mexico.'),
   o('refrescos', 'bebidas', 2, 1, '🥤', 'los refrescos', 'reh-FRES-kohs', 'the sodas',
     'Le sirvo refrescos', 'a {name}', 'I pour sodas for {name}.',
     'The altar holds whatever they liked to drink, like their favorite sodas.'),
@@ -219,7 +219,7 @@ const WHY_ES = {
   rosario: 'Las cuentas para rezar de alguien que rezaba: un recuerdo personal y religioso.',
   mariposa: 'Las mariposas monarca llegan a México cada año cerca del Día de Muertos. Los purépechas de Michoacán creen que son las almas de los muertos que regresan.',
   xolo: 'Según la creencia azteca, el xoloitzcuintle cuida a las personas en vida y guía a las almas a cruzar el río hacia el Mictlán, la tierra de los muertos.',
-  pan: 'Un pan dulce con cáscara de naranja y anís, con «huesos» de masa encima. Solo se hornea en esta temporada.',
+  pan: 'El pan dulce de la panadería, como las conchas, es una ofrenda favorita que la familia comparte después de la visita.',
   calavera: 'Las calaveras de azúcar llevan el nombre de la persona en la frente. Las chicas son para los niños y las grandes para los adultos. La muerte se recibe con dulzura, no con miedo.',
   mole: 'En Oaxaca, Puebla y Michoacán, el mole negro con pollo y ajonjolí es el platillo de esta celebración.',
   tamales: 'Las familias cocinan los platillos favoritos de sus seres queridos. Las almas disfrutan el aroma; algunos dicen que después la comida ya no tiene sabor porque las almas ya la probaron.',
@@ -229,7 +229,7 @@ const WHY_ES = {
   fruta: 'La fruta de temporada, como naranjas, mandarinas, guayabas y caña, es un regalo de la cosecha.',
   dulces: 'Los dulces son una ofrenda favorita, sobre todo para los niños que ya murieron.',
   cafe: 'Una taza del café que tomaba cada mañana hace que se sienta en casa.',
-  chocolate: 'El chocolate caliente se sirve con pan de muerto. El chocolate viene de México.',
+  chocolate: 'El chocolate caliente se sirve con pan dulce. El chocolate viene de México.',
   refrescos: 'En la ofrenda se pone lo que le gustaba tomar, como sus refrescos favoritos.',
   coca: 'En México se pide «una coca». La Coca-Cola es una de las bebidas más comunes en las ofrendas mexicanas.',
   jamaica: 'Las aguas frescas son bebidas frías hechas con fruta, flores o semillas. El agua de jamaica se hace con flor de jamaica seca y es de color rojo intenso.',
@@ -289,6 +289,8 @@ export const FAMOUS = [
   { id: 'vicente', name: 'Vicente Fernández', es: 'el rey de la ranchera', en: 'the king of ranchera music', icon: '🤠', photo: 'people/vicente.jpg' },
   { id: 'juanga', name: 'Juan Gabriel', es: 'el cantautor', en: 'the singer-songwriter', icon: '🎶', photo: 'people/juanga.jpg' },
   { id: 'selena', name: 'Selena', es: 'la reina de la música tejana', en: 'the queen of Tejano music', icon: '🌹', photo: 'people/selena.jpg' },
+  { id: 'celia', name: 'Celia Cruz', es: 'la reina de la salsa', en: 'the queen of salsa', icon: '💃', photo: 'people/celia.jpg' },
+  { id: 'dolly', name: 'Dolly Parton', es: 'la reina del country', en: 'the queen of country music', icon: '🎸', photo: 'people/dolly.jpg' },
 ];
 // No longer offered, but altars saved earlier still open with the right icon.
 const FAMOUS_RETIRED = [
