@@ -723,19 +723,12 @@ body.no-en .caption-sub .en.word-en, body.no-en .say .en.word-en { display: inli
 .photo.guest { padding: 1cqw; gap: 0.4cqw; z-index: 150; }
 .photo.guest .photo-name { font-size: max(10px, 1.6cqw); }
 .photo.guest .photo-icon { font-size: 5.5cqw; }
-/* "Another loved one" sits on the count line, at the right, so it covers only the papel picado */
-.title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.add-guest {
-  flex: none;
-  pointer-events: auto;
-  min-height: 44px;
-  padding: 3px 12px;
-  font-size: 14px;
-  line-height: 1.15;
-  background: rgba(51, 32, 74, 0.82);
-  text-shadow: none;
-}
-.add-guest .en { display: block; font-size: 13px; font-weight: 400; }
+/* "Another loved one" lives in the bottom bar, next to Save and Practice, so it never covers the altar */
+.dock-foot { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; align-items: stretch; }
+.dock-foot:has(#addGuestBtn[hidden]) { grid-template-columns: 1fr 1fr; }
+.dock-foot .btn { padding: 4px 6px; font-size: 14px; line-height: 1.2; white-space: nowrap; }
+.dock-foot .en { display: block; font-size: 13px; }
+@media (max-width: 359px) { .dock-foot .btn { white-space: normal; } }
 .guest-dialog { max-width: 420px; width: calc(100% - 32px); border: 2px solid var(--line); border-radius: 18px; background: #24132e; color: inherit; padding: 20px; }
 .guest-dialog::backdrop { background: rgba(10, 4, 12, 0.7); }
 .guest-dialog h2 { margin-top: 0; }

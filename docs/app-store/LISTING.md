@@ -107,7 +107,7 @@ the photos of famous people are public domain (Wikimedia Commons), except Vicent
 
 Mi Ofrenda is a Spanish-learning game about Mexico's Day of the Dead (Día de Muertos). No sign-in is needed.
 
-How to try it: tap "Crear una ofrenda", choose a person (for example "Frida Kahlo"), then drag offerings from the tray onto the altar, or tap one. Each offering opens a card with its Spanish word, pronunciation and a recorded sentence (tap "Escuchar"). "Practicar" opens a short quiz. "Guardar y compartir" makes a picture of the altar and opens the iOS share sheet (Save Image puts it in Photos).
+How to try it: tap "Crear una ofrenda", choose a person (for example "Frida Kahlo"), then drag offerings from the tray onto the altar, or tap one. Each offering opens a card with its Spanish word, pronunciation and a recorded sentence (tap "Escuchar"). "Practicar" opens a short quiz. "📷 Guardar" makes a picture of the altar and opens the iOS share sheet (Save Image puts it in Photos).
 
 The app works offline and collects no data; altars are stored only on the device. The camera and photo library are used only when the player chooses to add a photo of their loved one. The famous people shown are historical figures who have died; their photos are public domain or Creative Commons with credit. Alcohol and cigarettes appear only as traditional altar offerings.
 
