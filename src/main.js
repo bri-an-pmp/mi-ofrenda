@@ -230,14 +230,21 @@ function pickButton(icon, es, enText, onClick, detail = '', photo = '') {
 }
 
 function buildChooser() {
-  for (const r of RELATIONS) {
-    $('relationGrid').append(pickButton(r.icon, r.es, r.en, (ev) => {
+  // "Upload a photo" comes first: the most direct way to remember anyone not listed
+  for (const r of [...RELATIONS].sort((x, y) => Number(Boolean(y.pick)) - Number(Boolean(x.pick)))) {
+    const label = r.pick || r;
+    $('relationGrid').append(pickButton(label.icon, label.es, label.en, (ev) => {
       pickedRelation = r;
       for (const b of $('relationGrid').children) b.setAttribute('aria-pressed', String(b === ev.currentTarget));
-      $('pickedLabel').replaceChildren(`Vas a recordar a ${r.es}.`, english(`You're remembering ${r.en}.`));
       $('nameInput').placeholder = r.kind === 'pet' ? 'Por ejemplo: Canela' : 'Por ejemplo: Rosa';
       $('personForm').hidden = false;
-      $('nameInput').focus();
+      if (r.pick) {
+        $('pickedLabel').replaceChildren('Sube su foto y escribe su nombre.', english('Upload their photo and type their name.'));
+        $('photoFile').click(); // opens the photo picker right away
+      } else {
+        $('pickedLabel').replaceChildren(`Vas a recordar a ${r.es}.`, english(`You're remembering ${r.en}.`));
+        $('nameInput').focus();
+      }
     }));
   }
   for (const b of $('relationGrid').children) b.setAttribute('aria-pressed', 'false');
@@ -265,6 +272,7 @@ function buildChooser() {
     $('photoClear').hidden = false;
     $('photoFileText').textContent = '📷 Cambiar la foto';
     $('photoFileEn').textContent = 'Change the photo';
+    if (pickedRelation?.pick) $('nameInput').focus();
   });
   $('photoClear').addEventListener('click', clearPendingPhoto);
 }

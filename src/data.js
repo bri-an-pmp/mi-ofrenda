@@ -321,7 +321,8 @@ export const RELATIONS = [
   { id: 'amigo', es: 'mi amigo', en: 'my friend (man)', icon: '🙋‍♂️', kind: 'person' },
   { id: 'perro', es: 'mi perro', en: 'my dog', icon: '🐶', kind: 'pet' },
   { id: 'gato', es: 'mi gato', en: 'my cat', icon: '🐱', kind: 'pet' },
-  { id: 'otro', es: 'alguien especial', en: 'someone special', icon: '💛', kind: 'person' },
+  // The chooser shows this one as a direct action (pick); es/en stay for the default name and saved altars
+  { id: 'otro', es: 'alguien especial', en: 'someone special', icon: '💛', kind: 'person', pick: { es: 'sube una foto', en: 'upload a photo', icon: '📷' } },
 ];
 
 // Well-known people often honored on public altars in Mexico. People still living are left out of
