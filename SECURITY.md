@@ -1,6 +1,6 @@
 # Security
 
-Mi Ofrenda: a static website (Vite, GitHub Pages) for building a Día de Muertos altar and learning Spanish. There is no server and no account. Altars, names, memories and photos are saved only in the visitor's own browser.
+Mi Ofrenda: a static website (Vite, GitHub Pages) and an iPhone app (Capacitor) for building a Día de Muertos altar and learning Spanish. There is no server and no account. Altars, names, memories and photos are saved only on the visitor's own device: in the browser, or inside the iPhone app.
 
 ## Reporting a vulnerability
 
@@ -24,6 +24,7 @@ Please report security issues privately through GitHub: **Security → Report a 
 - **Saved data is untrusted:** `cleanAltar()` in `src/main.js` accepts only known offerings and people (own keys only, so `__proto__`-style keys are ignored), IDs in a fixed format, clamped positions, capped text lengths, at most 100 altars, and photos only as small JPEG data.
 - **Photos:** only JPEG, PNG, WebP, GIF and HEIC files up to 25 MB and 40 megapixels are accepted. They are redrawn on the device at 640 px, which also removes camera data such as GPS location, and they never leave the device unless the visitor shares an image.
 - **Voice key:** the ElevenLabs key is used only by `scripts/make-voice.mjs` on the owner's computer, from a gitignored `.env` file (readable only by the owner). The website never contacts ElevenLabs; it plays pre-made audio files. The key is restricted to Text to Speech with a credit cap.
+- **iPhone app:** the app loads only its own bundled files and makes no network requests to run (the help and privacy links open in Safari). Saved altars are also copied to a file in the app's own private storage (`src/native.js`), read back through the same `cleanAltar()` checks. The camera and photo library are used only when the player picks a photo; App Store privacy label: Data Not Collected. The app is signed with Apple's cloud-managed distribution certificate, so no signing keys, certificates or provisioning profiles are stored in this repository or needed on disk.
 - **Build pipeline:** the deploy workflow uses a least-privilege token and GitHub Actions pinned to exact commit SHAs.
 
 ## Checks run on 2026-10-18
@@ -44,3 +45,13 @@ Please report security issues privately through GitHub: **Security → Report a 
 ## Not covered
 
 These checks are automated and point-in-time. They are not a formal penetration test or audit.
+
+## Checks run on 2026-10-19 (iPhone app)
+
+| Check | Result |
+|---|---|
+| Secret patterns and credential files (`.env`, keys, `.p12`, `.cer`, `.mobileprovision`) in the repository, including the new `ios/` project | ✅ None found; `.env` stays gitignored |
+| `npm audit --omit=dev` (Capacitor runtime plugins) | ✅ 0 known vulnerabilities |
+| `npm audit` (including build tools) | ✅ 0 after forcing `uuid` ^11.1.1 (it was pulled in at 7.0.3 by the Capacitor CLI's `xcode` package; development-only, never shipped) |
+| App build under the Content Security Policy in the iOS simulator: altars, audio, share sheet, saved-data copy | ✅ Nothing blocked |
+

@@ -11,7 +11,20 @@ Build a Día de los Muertos altar for someone you love and learn Spanish. Everyt
 5. Save or share the altar as a picture: Publicación 4:5 (1080×1350), Historia 9:16 (1080×1920) or Cuadrada 1:1 (1080×1080), as JPG or PNG. On phones, Compartir opens the share menu (Instagram, WhatsApp, Facebook, TikTok, Messages, Mail, Save Image).
 6. Practice the words you placed with a short quiz.
 
-Altars are saved in the browser on this device.
+Altars are saved only on this device (in the browser, or inside the iPhone app).
+
+## iPhone app
+
+**Status: version 1.0 submitted to the App Store on October 19, 2026 (waiting for Apple's review).** It is free, iPhone only, and Spanish (Mexico) first. It is the same game as the website, with a few iPhone extras: the altar picture goes straight to the share sheet ("Save Image" puts it in Photos), a light tap is felt when an offering lands, sound plays even with the silent switch on, everything works offline, and saved altars are also kept in the app's own files. People still living are left out of the app version.
+
+<p>
+  <img src="docs/app-store/3-altar.png" width="200" alt="Frida Kahlo's altar with candles, marigolds, pan dulce and papel picado">
+  <img src="docs/app-store/4-palabra.png" width="200" alt="Word card for el xoloitzcuintle with pronunciation and a sentence">
+  <img src="docs/app-store/2-elegir.png" width="200" alt="Choosing who to remember: family, pets or a well-known person">
+  <img src="docs/app-store/5-practicar.png" width="200" alt="Practice quiz: ¿Cómo se dice?">
+</p>
+
+Privacy policy: [privacidad.html](https://bri-an-pmp.github.io/mi-ofrenda/privacidad.html) · Help and contact: [ayuda.html](https://bri-an-pmp.github.io/mi-ofrenda/ayuda.html)
 
 ## Run it
 
