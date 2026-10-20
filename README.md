@@ -34,6 +34,15 @@ To make the clips with ElevenLabs:
 
 To record a real person instead, run `npm run voice -- --list` to see every file name and what it should say.
 
+## iPhone app
+
+The same code runs as an iPhone app with Capacitor (bundle ID `com.brianathey.miofrenda`, iPhone only).
+
+- `npm run ios` builds the app version (`vite build --mode app`, which leaves out people still living) and copies it into `ios/App`.
+- Sign and upload with Apple's cloud signing (no local keychain needed): archive with `CODE_SIGNING_ALLOWED=NO`, then `xcodebuild -exportArchive -allowProvisioningUpdates` with `method` `app-store-connect`, `signingStyle` `automatic`, team `HR3HH7NX4H`. Raise the build number (`CURRENT_PROJECT_VERSION`) for every upload.
+- App-only features live in `src/native.js`: a file copy of saved altars, a light haptic when an offering lands, and the iPhone share sheet.
+- Store text, screenshots and review notes: `docs/app-store/`. Privacy and help pages: `public/privacidad.html`, `public/ayuda.html`.
+
 ## Code map
 
 - `index.html`: the three screens (welcome, choose a person, altar), the word card and the quiz.

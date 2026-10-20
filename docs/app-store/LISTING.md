@@ -3,7 +3,7 @@
 Copy each field into App Store Connect (appstoreconnect.apple.com → Apps → Mi Ofrenda).
 Screenshots are the six PNG files in this folder (1320 × 2868, the 6.9-inch iPhone size). Upload them in order, 1 to 6.
 
-Replace SUPPORT_EMAIL below (and in public/ayuda.html and public/privacidad.html) with the support address.
+Replace soporte.miofrenda@gmail.com below (and in public/ayuda.html and public/privacidad.html) with the support address.
 
 ## App information
 
@@ -111,4 +111,4 @@ How to try it: tap "Crear una ofrenda", choose a person (for example "Frida Kahl
 
 The app works offline and collects no data; altars are stored only on the device. The camera and photo library are used only when the player chooses to add a photo of their loved one. The famous people shown are historical figures who have died; their photos are public domain or Creative Commons with credit. Alcohol and cigarettes appear only as traditional altar offerings.
 
-Contact: SUPPORT_EMAIL
+Contact: soporte.miofrenda@gmail.com
