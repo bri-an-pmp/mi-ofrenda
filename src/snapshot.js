@@ -281,7 +281,8 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
   const leadW = ctx.measureText(`${lead} `).width;
   ctx.font = `700 ${titleSize}px ${SERIF}`;
   const sameLine = leadW + ctx.measureText((altar.title || altar.name)).width <= W - margin * 2;
-  let y = margin + titleSize;
+  // Stories: start lower, clear of Instagram's top bar and of the middle crop Messages shows
+  let y = margin + titleSize + (sizeKey === 'historia' ? 220 * k : 0);
   ctx.font = `italic 600 ${titleSize}px ${SERIF}`;
   ctx.fillStyle = '#f59b23';
   ctx.fillText(lead, margin, y);
@@ -302,7 +303,30 @@ export async function renderAltar({ altar, icon, sizeKey, roomSvg, altarSvg, def
     }
   }
 
-  // the story format has room for the words on the altar
+  // the words on the altar: one line on the post and square sizes ("la vela · el cempasúchil +2")
+  if (sizeKey !== 'historia' && altar.items.length) {
+    const words = [...new Set(items.map((i) => OFFERING_BY_ID[i.id].es))];
+    const size = 28 * k;
+    const top = y + 46 * k;
+    if (top < ay + ah * 0.05) {
+      ctx.font = `600 ${size}px ${SANS}`;
+      ctx.fillStyle = '#f6efe6';
+      let line = '';
+      let shown = 0;
+      for (const word of words) {
+        const rest = words.length - shown - 1;
+        const next = line ? `${line} · ${word}` : word;
+        const tail = rest ? `  +${rest} más` : '';
+        if (ctx.measureText(next + tail).width > W - margin * 2) break;
+        line = next;
+        shown++;
+      }
+      const more = words.length - shown;
+      ctx.fillText(more ? `${line}  +${more} más` : line, margin, top);
+    }
+  }
+
+  // the story format has room for all the words as chips
   if (sizeKey === 'historia' && altar.items.length) {
     const words = [...new Set(items.map((i) => OFFERING_BY_ID[i.id].es))];
     const chip = 30 * k;

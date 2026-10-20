@@ -360,6 +360,13 @@ function allNames(a) {
   return names.length < 2 ? names[0] : `${names.slice(0, -1).join(', ')} y ${names.at(-1)}`;
 }
 
+// Names inside a sentence: default names like "Mi abuela" read "mi abuela" mid-sentence
+function namesInSentence(a) {
+  return allNames(a).replace(/(^|, | y )(Mi|Alguien) /g, (m, sep, w) => `${sep}${w.toLowerCase()} `);
+}
+
+const SITE_URL = 'https://bri-an-pmp.github.io/mi-ofrenda/';
+
 function openAltar(a) {
   current = a;
   if (!Array.isArray(current.guests)) current.guests = [];
@@ -1259,8 +1266,9 @@ function downloadShot() {
 }
 
 async function shareShot() {
-  const title = `Mi ofrenda para ${allNames(current)}`;
-  const text = `Hice una ofrenda para ${allNames(current)} y aprendí español. #DíaDeMuertos`;
+  const le = current.guests.length ? 'Les' : 'Le';
+  const title = `La ofrenda para ${allNames(current)}`;
+  const text = `${le} puse su ofrenda a ${namesInSentence(current)} 🕯️🌼 y de paso aprendí cómo se dice todo en español. Ármale una a quien extrañes: ${SITE_URL} #DíaDeMuertos`;
   try {
     if (isApp) {
       await sharePicture(shot.blob, shot.name, title, text);
@@ -1281,8 +1289,9 @@ async function shareShot() {
 
 function emailShot() {
   downloadShot();
-  const subject = `Mi ofrenda para ${allNames(current)}`;
-  const body = `Te comparto la ofrenda que hice para ${allNames(current)} (la imagen va adjunta).\n\nhttps://${'bri-an-pmp.github.io/mi-ofrenda/'}`;
+  const le = current.guests.length ? 'les' : 'le';
+  const subject = `La ofrenda para ${allNames(current)}`;
+  const body = `Te comparto la ofrenda que ${le} puse a ${namesInSentence(current)}. Te mando la imagen adjunta.\n\nÁrmale una a quien extrañes y de paso aprende cómo se dice todo en español: ${SITE_URL}`;
   say('Se descargó la imagen. Adjúntala al correo que se abrió.', 'The picture was downloaded. Attach it to the email that opened.');
   window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
