@@ -1,7 +1,7 @@
 # Mi Ofrenda: App Store listing
 
 Copy each field into App Store Connect (appstoreconnect.apple.com → Apps → Mi Ofrenda).
-Screenshots are the six PNG files in this folder (1320 × 2868, the 6.9-inch iPhone size). Upload them in order, 1 to 6.
+Screenshots are the six PNG files in this folder (1206 × 2622, "iPhone with Dynamic Island (medium display)", the size App Store Connect requires). Upload them in order, 1 to 6.
 
 Replace soporte.miofrenda@gmail.com below (and in public/ayuda.html and public/privacidad.html) with the support address.
 

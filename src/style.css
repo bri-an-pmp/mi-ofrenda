@@ -98,8 +98,10 @@ input::placeholder, textarea::placeholder { color: #a99abb; }
   border: 0;
   padding: 0 4px;
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: clamp(18px, 5vw, 22px); /* stays on one line next to Atrás and Inglés on small phones */
   font-weight: 600;
+  white-space: nowrap;
+  flex: none;
 }
 
 /* ---------- welcome ---------- */
@@ -752,3 +754,9 @@ body.no-en .caption-sub .en.word-en, body.no-en .say .en.word-en { display: inli
 .legal-links { text-align: center; margin-top: 24px; }
 .legal-links a { display: inline-block; min-height: 44px; padding: 10px 8px; color: var(--marigold); }
 .legal-links .en { display: block; }
+
+/* Smallest iPhones (320px): tighter top bar so nothing scrolls sideways */
+@media (max-width: 359px) {
+  .topbar { gap: 6px; padding-left: 10px; padding-right: 10px; }
+  .brand { font-size: 16px; padding: 0; }
+}
