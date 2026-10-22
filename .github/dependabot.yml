@@ -1,11 +1,15 @@
-# Weekly check for security updates to the build tools and the pinned GitHub Actions
+# Security fixes are proposed automatically (repository setting "Dependabot security updates").
+# Routine version upgrades are turned off (limit 0) so big upgrades don't arrive right before a
+# release; upgrade deliberately, test the website and the iPhone build, then raise these limits.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 0
