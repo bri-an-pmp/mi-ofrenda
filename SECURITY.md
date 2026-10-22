@@ -21,7 +21,7 @@ Please report security issues privately through GitHub: **Security → Report a 
 | GitHub secret scanning | Enabled |
 | Push protection (blocks commits that contain secrets) | Enabled |
 | Dependabot vulnerability alerts and security updates | Enabled |
-| Dependabot version checks for npm and the pinned GitHub Actions (`.github/dependabot.yml`) | Weekly |
+| Dependabot routine version upgrades (`.github/dependabot.yml`) | Paused until after Día de Muertos (security fixes still automatic) |
 | Private vulnerability reporting | Enabled |
 
 ## How the app protects visitors
