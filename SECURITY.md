@@ -2,6 +2,14 @@
 
 Mi Ofrenda: a static website (Vite, GitHub Pages) and an iPhone app (Capacitor) for building a Día de Muertos altar and learning Spanish. There is no server and no account. Altars, names, memories and photos are saved only on the visitor's own device: in the browser, or inside the iPhone app.
 
+## Releases
+
+| Version | Build | Code | Submitted to App Review | Archive |
+|---|---|---|---|---|
+| 1.0 | 6 | tag `v1.0-build6` (commit `7fa75d9`) | 2026-10-20 | Kept on the owner's Mac in Xcode's archives (Window → Organizer), with crash-report symbols. Export settings: `docs/app-store/ExportOptions.plist`. |
+
+Outside photos, voice and icon, with their licenses: see [CREDITS.md](CREDITS.md).
+
 ## Reporting a vulnerability
 
 Please report security issues privately through GitHub: **Security → Report a vulnerability** on this repository (private vulnerability reporting is enabled). Don't open a public issue for security problems.
@@ -55,3 +63,15 @@ These checks are automated and point-in-time. They are not a formal penetration 
 | `npm audit` (including build tools) | ✅ 0 after forcing `uuid` ^11.1.1 (it was pulled in at 7.0.3 by the Capacitor CLI's `xcode` package; development-only, never shipped) |
 | App build under the Content Security Policy in the iOS simulator: altars, audio, share sheet, saved-data copy | ✅ Nothing blocked |
 
+
+## Checks run on 2026-10-21 (release inventory)
+
+| Check | Result |
+|---|---|
+| Unpublished changes | ✅ None: everything is on GitHub |
+| Dependabot alerts / secret-scanning alerts | ✅ 0 open / 0 open |
+| `npm audit` | ✅ 0 known vulnerabilities |
+| Privacy and help pages linked from the App Store (`privacidad.html`, `ayuda.html`) | ✅ Online |
+| Export-compliance answer built into the app (`ITSAppUsesNonExemptEncryption` = false) | ✅ Present |
+| `.env` (ElevenLabs key) permissions | ✅ Owner only, gitignored |
+| Release recorded | ✅ Tag `v1.0-build6`; archive with symbols saved; credits in CREDITS.md |
