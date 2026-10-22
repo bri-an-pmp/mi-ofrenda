@@ -15,7 +15,7 @@ Altars are saved only on this device (in the browser, or inside the iPhone app).
 
 ## iPhone app
 
-**Status: version 1.0 submitted to the App Store on October 19, 2026 (waiting for Apple's review).** It is free, iPhone only, and Spanish (Mexico) first. It is the same game as the website, with a few iPhone extras: the altar picture goes straight to the share sheet ("Save Image" puts it in Photos), a light tap is felt when an offering lands, sound plays even with the silent switch on, everything works offline, and saved altars are also kept in the app's own files. People still living are left out of the app version.
+**Status: version 1.0 (build 6, tag `v1.0-build6`) submitted to the App Store on October 20, 2026 (in Apple's review).** It is free, iPhone only, and Spanish (Mexico) first. It is the same game as the website, with a few iPhone extras: the altar picture goes straight to the share sheet ("Save Image" puts it in Photos), a light tap is felt when an offering lands, sound plays even with the silent switch on, everything works offline, and saved altars are also kept in the app's own files. People still living are left out of the app version.
 
 <p>
   <img src="docs/app-store/3-altar.png" width="200" alt="Frida Kahlo's altar with candles, marigolds, pan dulce and papel picado">
