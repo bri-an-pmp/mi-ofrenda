@@ -1559,4 +1559,7 @@ $('tabs').addEventListener('keydown', (ev) => {
   selectTab(ids[(i + (ev.key === 'ArrowRight' ? 1 : ids.length - 1)) % ids.length], true);
 });
 
+// On the website, point iPhone players to the app (the app itself doesn't need the link)
+if (!isApp) $('appStoreLink').hidden = false;
+
 goHome();

@@ -2,7 +2,7 @@
 
 Mi Ofrenda: a Día de Muertos altar game for learning Spanish. The player chooses someone to remember (family, a pet, a well-known person), drags offerings onto an altar in a warm candlelit room, and learns each word, how to say it and a sentence with the person's name. It runs as a website (GitHub Pages) and as an iPhone app (Capacitor, on the App Store). The owner is not a developer: explain things in plain language, step by step.
 
-Live site: https://bri-an-pmp.github.io/mi-ofrenda/ · Repo: bri-an-pmp/mi-ofrenda · App Store 1.0 = build 6 = tag `v1.0-build6`.
+Live site: https://bri-an-pmp.github.io/mi-ofrenda/ · Repo: bri-an-pmp/mi-ofrenda · App Store: https://apps.apple.com/us/app/mi-ofrenda/id6824747905 (1.0 = build 6 = tag `v1.0-build6`).
 
 ## Setup and commands
 

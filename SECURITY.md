@@ -4,9 +4,9 @@ Mi Ofrenda: a static website (Vite, GitHub Pages) and an iPhone app (Capacitor) 
 
 ## Releases
 
-| Version | Build | Code | Submitted to App Review | Archive |
-|---|---|---|---|---|
-| 1.0 | 6 | tag `v1.0-build6` (commit `7fa75d9`) | 2026-10-20 | Kept on the owner's Mac in Xcode's archives (Window → Organizer), with crash-report symbols. Export settings: `docs/app-store/ExportOptions.plist`. |
+| Version | Build | Code | Submitted to App Review | Status | Archive |
+|---|---|---|---|---|---|
+| 1.0 | 6 | tag `v1.0-build6` (commit `7fa75d9`) | 2026-10-20 | Live on the [App Store](https://apps.apple.com/us/app/mi-ofrenda/id6824747905) (confirmed 2026-10-23) | Kept on the owner's Mac in Xcode's archives (Window → Organizer), with crash-report symbols. Export settings: `docs/app-store/ExportOptions.plist`. |
 
 Outside photos, voice and icon, with their licenses: see [CREDITS.md](CREDITS.md).
 

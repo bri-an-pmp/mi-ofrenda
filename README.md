@@ -15,7 +15,7 @@ Altars are saved only on this device (in the browser, or inside the iPhone app).
 
 ## iPhone app
 
-**Status: version 1.0 (build 6, tag `v1.0-build6`) submitted to the App Store on October 20, 2026 (in Apple's review).** It is free, iPhone only, and Spanish (Mexico) first. It is the same game as the website, with a few iPhone extras: the altar picture goes straight to the share sheet ("Save Image" puts it in Photos), a light tap is felt when an offering lands, sound plays even with the silent switch on, everything works offline, and saved altars are also kept in the app's own files. People still living are left out of the app version.
+**Status: on the App Store.** [Download Mi Ofrenda for iPhone](https://apps.apple.com/us/app/mi-ofrenda/id6824747905) (version 1.0, build 6, tag `v1.0-build6`; submitted October 20, 2026). It is free, iPhone only, and Spanish (Mexico) first. It is the same game as the website, with a few iPhone extras: the altar picture goes straight to the share sheet ("Save Image" puts it in Photos), a light tap is felt when an offering lands, sound plays even with the silent switch on, everything works offline, and saved altars are also kept in the app's own files. People still living are left out of the app version.
 
 <p>
   <img src="docs/app-store/3-altar.png" width="200" alt="Frida Kahlo's altar with candles, marigolds, pan dulce and papel picado">
@@ -23,6 +23,10 @@ Altars are saved only on this device (in the browser, or inside the iPhone app).
   <img src="docs/app-store/2-elegir.png" width="200" alt="Choosing who to remember: family, pets or a well-known person">
   <img src="docs/app-store/5-practicar.png" width="200" alt="Practice quiz: ¿Cómo se dice?">
 </p>
+
+<a href="https://apps.apple.com/us/app/mi-ofrenda/id6824747905"><img src="docs/app-store/qr-app-store.svg" width="140" alt="QR code that opens Mi Ofrenda on the App Store"></a>
+
+Scan with an iPhone camera to open it in the App Store.
 
 Privacy policy: [privacidad.html](https://bri-an-pmp.github.io/mi-ofrenda/privacidad.html) · Help and contact: [ayuda.html](https://bri-an-pmp.github.io/mi-ofrenda/ayuda.html)
 
